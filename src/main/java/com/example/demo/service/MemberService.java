@@ -40,14 +40,14 @@ public class MemberService implements UserDetailsService {
                 .name(memberDto.getName())
                 .phone_number(memberDto.getPhone_number())
                 .department(memberDto.getDepartment())
-                .user_id(memberDto.getUser_id())
+                .userId(memberDto.getUserId())
                 .build()).getId();
     }
 
     //상세 정보 조회
     //사용자의 계정정보와 권한을 갖는 UserDetails 인터페이스 반환
     @Override
-    public MemberEntity loadUserByUsername(String email) throws UsernameNotFoundException {
-        return memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException((email)));
+    public MemberEntity loadUserByUsername(String userId) throws UsernameNotFoundException {
+        return memberRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException((userId)));
     }
 }

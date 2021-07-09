@@ -23,7 +23,7 @@ public class MemberEntity implements UserDetails {
     private Long id;
 
     @Column(length = 30, nullable = false)
-    private String user_id;
+    private String userId;
 
     @Column(length = 100, nullable = false)
     private String password;
@@ -44,8 +44,8 @@ public class MemberEntity implements UserDetails {
     private String status;
 
     @Builder
-    public MemberEntity(String email, String password, String status, String name, String phone_number, String department, String user_id) {
-        this.user_id = user_id;
+    public MemberEntity(String email, String password, String status, String name, String phone_number, String department, String userId) {
+        this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
