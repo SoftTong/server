@@ -25,11 +25,6 @@ public class MemberEntity implements UserDetails {
     @Column(length = 30, nullable = false)
     private String userId;
 
-    @Column(length = 100, nullable = false)
-    private String password;
-
-    @Column(length = 50, nullable = false)
-    private String name;
 
     @Column(length = 50, nullable = false)
     private String email;
@@ -37,6 +32,11 @@ public class MemberEntity implements UserDetails {
     @Column(length = 50, nullable = false)
     private String phone_number;
 
+    @Column(length = 100, nullable = false)
+    private String password;
+
+    @Column(length = 50, nullable = false)
+    private String name;
     @Column(length = 50, nullable = false)
     private String department;
 
@@ -53,6 +53,17 @@ public class MemberEntity implements UserDetails {
         this.department = department;
         this.status = status;
     }
+    /// Patch 함수 적용하려고 만든 함수. 추후 security보고 수정필요. Sangrok.
+    public void setName(String name) {
+        this.name = name;
+        return;
+    }
+
+    public String getName(){
+        return name;
+    }
+    ///
+
 
     // 사용자의 권한을 콜렉션 형태로 반환
     // 자료형은 GrantedAuthority를 구현해야함

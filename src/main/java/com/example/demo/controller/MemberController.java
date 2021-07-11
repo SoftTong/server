@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import java.util.Map;
+import java.util.HashMap;
 import ch.qos.logback.core.CoreConstants;
 import com.example.demo.dto.MemberDto;
 import com.example.demo.service.MemberService;
@@ -26,6 +28,7 @@ public class MemberController {
     @PostMapping("/register/user")
     public String signUp(MemberDto memberDto) { // 회원 추가
         memberService.joinUser(memberDto);
+
         return "redirect:/login";
     }
 
@@ -35,6 +38,19 @@ public class MemberController {
         new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
         return "redirect:/login";
     }
+//
+    @PatchMapping(value= "/user/{id}")// 회원정보 수정 Patch
+    public Map<String,Object> modifyUserInfo(@PathVariable(value="id") String id ,@RequestBody MemberDto userInfo){
+        Map<String,Object> response = new HashMap<>();
+
+        System.out.println(userInfo);
+//        memberService.PatchUser()
+
+
+        return response;
+    }
+
+
 
 }
 

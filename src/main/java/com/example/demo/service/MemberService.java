@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -50,4 +51,27 @@ public class MemberService implements UserDetailsService {
     public MemberEntity loadUserByUsername(String userId) throws UsernameNotFoundException {
         return memberRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException((userId)));
     }
+
+
+    // 회원정보 수정  Sangrok
+    @Transactional
+    public boolean PatchUser(String id,MemberDto userInfo){
+        final Optional<MemberEntity> optMember =memberRepository.findByUserId(id);
+        MemberEntity fetchedUser = optMember.get();
+    //  DB에서 가져온 유저 정보가 없거나 보낸 사람과 다르다면
+        if (fetchedUser==null || fetchedUser.getUserId() != id){
+            return false;
+        }
+        else{
+            if (userInfo.getName() != null){ // null 이 아니면 수정.
+                fetchedUser.setName(userInfo.getName());
+            } // 수정 계속하고
+        }
+
+        memberRepository.save(fetchedUser); // 저장.
+
+        return true;
+
+    }
+
 }
