@@ -39,15 +39,15 @@ public class MemberController {
         return "redirect:/login";
     }
 //
+    @ResponseBody
     @PatchMapping(value= "/user/{id}")// 회원정보 수정 Patch
-    public Map<String,Object> modifyUserInfo(@PathVariable(value="id") String id ,@RequestBody MemberDto userInfo){
+    public MemberDto modifyUserInfo(@PathVariable(value="id") String id, @RequestBody MemberDto userInfo){
         Map<String,Object> response = new HashMap<>();
 
-        System.out.println(userInfo);
-//        memberService.PatchUser()
+        System.out.println(id);
+        System.out.println(userInfo.getName());
 
-
-        return response;
+        return userInfo;
     }
 
 
