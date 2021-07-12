@@ -56,16 +56,21 @@ public class MemberService implements UserDetailsService {
     // 회원정보 수정  Sangrok
     @Transactional
     public boolean PatchUser(String id,MemberDto userInfo){
+
         final Optional<MemberEntity> optMember =memberRepository.findByUserId(id);
         MemberEntity fetchedUser = optMember.get();
-    //  DB에서 가져온 유저 정보가 없거나 보낸 사람과 다르다면
-        if (fetchedUser==null || fetchedUser.getUserId() != id){
-            return false;
+
+        if (userInfo.getPassword() != null){ // 비밀번호 수정.
+            fetchedUser.setPassword(userInfo.getPassword());
         }
-        else{
-            if (userInfo.getName() != null){ // null 이 아니면 수정.
-                fetchedUser.setName(userInfo.getName());
-            } // 수정 계속하고
+        if (userInfo.getName() != null){ // 이름 수정.
+            fetchedUser.setName(userInfo.getName());
+        }
+        if (userInfo.getEmail() != null){ // 이메일 수정.
+            fetchedUser.setEmail(userInfo.getEmail());
+           }
+        if (userInfo.getPhone_number() != null){ // 핸드폰 번호 수정
+            fetchedUser.setPhone_number(userInfo.getPhone_number());
         }
 
         memberRepository.save(fetchedUser); // 저장.

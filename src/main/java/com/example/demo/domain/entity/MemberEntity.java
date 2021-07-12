@@ -3,6 +3,7 @@ package com.example.demo.domain.entity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,6 +16,7 @@ import java.util.Set;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Setter
 @Entity
 @Table(name = "member")
 public class MemberEntity implements UserDetails {
@@ -53,17 +55,6 @@ public class MemberEntity implements UserDetails {
         this.department = department;
         this.status = status;
     }
-    /// Patch 함수 적용하려고 만든 함수. 추후 security보고 수정필요. Sangrok.
-    public void setName(String name) {
-        this.name = name;
-        return;
-    }
-
-    public String getName(){
-        return name;
-    }
-    ///
-
 
     // 사용자의 권한을 콜렉션 형태로 반환
     // 자료형은 GrantedAuthority를 구현해야함
