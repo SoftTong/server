@@ -10,6 +10,12 @@ spring:
     username: root
     password: root1234
 
+    # docker
+    # url: jdbc:mysql://mysql:3306/sotong?serverTimezone=UTC&characterEncoding=UTF-8
+    # username: sotong
+    # password: sotong
+
+
   jpa:
     show-sql: true
     hibernate.ddl-auto: create
