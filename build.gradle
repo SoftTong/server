@@ -32,6 +32,11 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
+	implementation 'org.apache.httpcomponents:httpcore'
+	implementation 'org.apache.httpcomponents:httpclient'
+
+	//implementation 'org.googlecode.json-simple:json-simple'
 }
 
 test {

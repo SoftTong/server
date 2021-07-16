@@ -1,8 +1,13 @@
 package com.example.demo.controller;
 
+import java.security.Principal;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Optional;
+
 import ch.qos.logback.core.CoreConstants;
+import com.example.demo.domain.entity.MemberEntity;
+import com.example.demo.domain.repository.MemberRepository;
 import com.example.demo.dto.MemberDto;
 import com.example.demo.service.MemberService;
 import lombok.AllArgsConstructor;
@@ -24,12 +29,31 @@ import javax.servlet.http.HttpServletResponse;
 public class MemberController {
 
     private final MemberService memberService;
+    private final MemberRepository memberRepository;
 
+    @ResponseBody
+    @GetMapping("/userinfo")
+    public Optional<MemberEntity> getUserInfo(Principal principal) {
+        System.out.println(principal.getName());
+        return memberRepository.findByEmail(principal.getName());
+    }
+
+    @ResponseBody
+    @GetMapping("/gettest")
+    public Optional<MemberEntity> getTest() {
+        return memberRepository.findByEmail("1");
+    }
+
+    @ResponseBody
     @PostMapping("/register/user")
-    public String signUp(MemberDto memberDto) { // 회원 추가
-        memberService.joinUser(memberDto);
+    public Long signUp(@RequestBody MemberDto memberDto) { // 회원 추가
 
-        return "redirect:/login";
+        Long check = memberService.joinUser(memberDto);
+
+        if(check == null)
+            return null;
+
+        return check;
     }
 
     //Get으로 /logout오면 Spring Security logout 작동

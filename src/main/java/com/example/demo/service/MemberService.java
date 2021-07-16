@@ -52,7 +52,6 @@ public class MemberService implements UserDetailsService {
         return memberRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException((userId)));
     }
 
-
     // 회원정보 수정  Sangrok
     @Transactional
     public boolean PatchUser(String id,MemberDto userInfo){

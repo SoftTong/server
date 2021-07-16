@@ -1,5 +1,8 @@
 package com.example.demo.config;
 
+import com.example.demo.security.filter.CustomUsernamePasswordAuthenticationFilter;
+import com.example.demo.security.handler.CustomAuthFailureHandler;
+import com.example.demo.security.handler.CustomAuthSuccessHandler;
 import com.example.demo.service.MemberService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +14,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -19,10 +25,27 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private MemberService memberService;
+    //private RESTAuthenticaionEntryPoint = authenticationEntryPoint;
 
     @Bean
     public PasswordEncoder passwordEncoder() { //암호화 객체
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler successHandler() {
+        return new CustomAuthSuccessHandler();
+    }
+
+    @Bean
+    public AuthenticationFailureHandler failureHandler() {
+        return new CustomAuthFailureHandler();
+    }
+
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception { //인증
+        //UserDetailService를 통해서 필요한 정보를 가져오는데, memberService에서 처리한다
+        auth.userDetailsService(memberService).passwordEncoder(passwordEncoder());
     }
 
     @Override
@@ -34,6 +57,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
+        http.csrf().disable();
+        http.formLogin().disable();
+        http.authorizeRequests().antMatchers("/user/login").permitAll();
+
+        //새로 구현한 Filter를 UsernamePasswordAuthenticaionFilter layer에 삽입
+        http.addFilterAt(getAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        /*
         http.csrf().disable();
 
         http.authorizeRequests()
@@ -57,11 +88,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     //403에러
                     .exceptionHandling().accessDeniedPage("/denied"); //예외 핸들링
+         */
     }
 
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception { //인증
-        //UserDetailService를 통해서 필요한 정보를 가져오는데, memberService에서 처리한다
-        auth.userDetailsService(memberService).passwordEncoder(passwordEncoder());
+    protected CustomUsernamePasswordAuthenticationFilter getAuthenticationFilter() {
+        CustomUsernamePasswordAuthenticationFilter authFilter = new CustomUsernamePasswordAuthenticationFilter();
+
+        try {
+            authFilter.setFilterProcessesUrl("/user/login");
+            authFilter.setAuthenticationManager(this.authenticationManagerBean());
+            authFilter.setUsernameParameter("username");
+            authFilter.setPasswordParameter("password");
+            authFilter.setAuthenticationSuccessHandler(successHandler());
+            authFilter.setAuthenticationFailureHandler(failureHandler());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return authFilter;
     }
 }
