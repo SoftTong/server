@@ -59,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.csrf().disable();
         http.formLogin().disable();
-        http.authorizeRequests().antMatchers("/user/login").permitAll();
+        http.authorizeRequests().antMatchers("/login").permitAll();
 
         //새로 구현한 Filter를 UsernamePasswordAuthenticaionFilter layer에 삽입
         http.addFilterAt(getAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -95,7 +95,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CustomUsernamePasswordAuthenticationFilter authFilter = new CustomUsernamePasswordAuthenticationFilter();
 
         try {
-            authFilter.setFilterProcessesUrl("/user/login");
+            authFilter.setFilterProcessesUrl("/login");
             authFilter.setAuthenticationManager(this.authenticationManagerBean());
             authFilter.setUsernameParameter("username");
             authFilter.setPasswordParameter("password");
