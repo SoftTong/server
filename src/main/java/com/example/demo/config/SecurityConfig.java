@@ -18,6 +18,10 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.CorsUtils;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -57,13 +61,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.csrf().disable();
+        //http.csrf().disable();
+        http.cors().and().csrf().disable().authorizeRequests().requestMatchers(CorsUtils::isPreFlightRequest).permitAll();
         http.formLogin().disable();
-        http.authorizeRequests().antMatchers("/login").permitAll();
+        //http.authorizeRequests().antMatchers("/login").permitAll();
 
         //새로 구현한 Filter를 UsernamePasswordAuthenticaionFilter layer에 삽입
         http.addFilterAt(getAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-
+        http.logout().logoutUrl("/logout");
         /*
         http.csrf().disable();
 
@@ -105,5 +110,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             e.printStackTrace();
         }
         return authFilter;
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource(){
+        System.out.println("----------------cors config-----------------------");
+
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.addAllowedOriginPattern("*");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        System.out.println("----------------cors config end-----------------------");
+        return source;
     }
 }

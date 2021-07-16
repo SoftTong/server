@@ -34,7 +34,11 @@ public class MemberController {
     @ResponseBody
     @GetMapping("/userinfo")
     public Optional<MemberEntity> getUserInfo(Principal principal) {
-        System.out.println(principal.getName());
+
+        if(principal.getName() == null)
+            System.out.println("not login");
+        else
+            System.out.println(principal.getName());
         return memberRepository.findByEmail(principal.getName());
     }
 
