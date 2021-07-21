@@ -17,7 +17,4 @@ public interface NoticeRepository extends JpaRepository<NoticeEntity, Long> {
     List<NoticeEntity> findByDestDay(Date destDay);
     // 작성자 아디로 찾기
     List<NoticeEntity> findByAuthorId(String authorId);
-
-    // 페이징 (업로드 날짜를 기준으로)
-    Page<NoticeEntity> findByUploadDay(Timestamp uploadDay, Pageable pageable);
 }

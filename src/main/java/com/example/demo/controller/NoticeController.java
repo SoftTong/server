@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,8 +27,7 @@ public class NoticeController {
     @ResponseBody
     @GetMapping("/{pageNum}")
     public Page<NoticeEntity> notice(@PathVariable int pageNum) {
-        Pageable page = PageRequest.of(pageNum, 10);
-        Timestamp now = new Timestamp(new Date().getTime());
-        return noticeRepository.findByUploadDay(now, page);
+        Pageable page = PageRequest.of(pageNum, 10, Sort.by("uploadDay").descending());
+        return noticeRepository.findAll(page);
     }
 }
