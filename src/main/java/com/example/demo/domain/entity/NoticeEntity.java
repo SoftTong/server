@@ -34,5 +34,5 @@ public class NoticeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private String authorId;
+    private MemberEntity memberEntity;
 }
