@@ -1,12 +1,15 @@
 package com.example.demo.domain.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.message.TimestampMessage;
 import org.hibernate.annotations.CreationTimestamp;
 import org.w3c.dom.Text;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.sql.Time;
 import java.sql.Timestamp;
 
 @Entity
@@ -35,4 +38,17 @@ public class NoticeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private MemberEntity memberEntity;
+
+
+    @Builder
+    public NoticeEntity(String name, String content, String tag1, String tag2, String tag3, Date startDay, Date destDay) {
+      this.name=name;
+      this.content=content;
+      this.tag1=tag1;
+      this.tag2=tag2;
+      this.tag3=tag3;
+      this.startDay=startDay;
+      this.destDay=destDay;
+    }
+
 }
