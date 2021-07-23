@@ -1,5 +1,6 @@
 package com.example.demo.domain.entity;
 
+import com.example.demo.dao.MemberDao;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,9 +12,10 @@ import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
-/*
+
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 @Table(name = "file_board")
 public class NoticeEntity {
 
@@ -37,8 +39,7 @@ public class NoticeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private MemberEntity memberEntity;
-
+    private MemberDao memberDao;
 
     @Builder
     public NoticeEntity(String name, String content, String tag1, String tag2, String tag3, Date startDay, Date destDay) {
@@ -52,4 +53,3 @@ public class NoticeEntity {
     }
 
 }
-*/

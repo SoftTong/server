@@ -1,5 +1,5 @@
 package com.example.demo.controller;
-/*
+
 import com.example.demo.domain.entity.NoticeEntity;
 import com.example.demo.domain.repository.NoticeRepository;
 import com.example.demo.dto.NoticeDto;
@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +33,7 @@ public class NoticeController {
         return noticeRepository.findAll(page);
     }
 
+    @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
     @GetMapping("/newpost/board")
     public NoticeDto postBoard(@RequestBody NoticeDto postInfo) {
@@ -39,4 +41,3 @@ public class NoticeController {
         return postInfo;
     }
 }
-*/

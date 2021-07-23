@@ -1,6 +1,5 @@
 package com.example.demo.dto;
-/*
-import com.example.demo.domain.entity.MemberEntity;
+
 import lombok.*;
 
 import javax.persistence.Column;
@@ -16,8 +15,6 @@ public class MemberDto {
     private String password;
     private String name;
     private String email;
-    private String phone_number;
+    private String phoneNumber;
     private String department;
-    private String status;
 }
-*/

@@ -8,13 +8,6 @@ import java.lang.reflect.Member;
 import java.util.List;
 import java.util.Optional;
 
-/*
-public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
-    Optional<MemberEntity> findByUserId(String userId);
-    Optional<MemberEntity> findByEmail(String userEmail);
-}
-*/
-
 public interface MemberRepository extends JpaRepository<MemberDao, Long> {
     Optional<MemberDao> findByEmail(String email);
     Optional<MemberDao> findByNameOrEmail(String name, String email);

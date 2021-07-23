@@ -1,8 +1,7 @@
 package com.example.demo.service;
-/*
+
 import com.example.demo.dao.MemberDao;
-import com.example.demo.domain.Role;
-import com.example.demo.domain.entity.MemberEntity;
+//import com.example.demo.domain.Role;
 import com.example.demo.domain.repository.MemberRepository;
 import com.example.demo.dto.MemberDto;
 import lombok.AllArgsConstructor;
@@ -25,38 +24,12 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class MemberService implements UserDetailsService {
+public class MemberService {
     private MemberRepository memberRepository;
-
-    //회원가입 처리
-    @Transactional
-    public Long joinUser(MemberDto memberDto) {
-
-        //비밀번호 암호화
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        memberDto.setPassword(passwordEncoder.encode(memberDto.getPassword()));
-
-        return memberRepository.save(MemberEntity.builder()
-                .email(memberDto.getEmail())
-                .status(memberDto.getStatus())
-                .password(memberDto.getPassword())
-                .name(memberDto.getName())
-                .phone_number(memberDto.getPhone_number())
-                .department(memberDto.getDepartment())
-                .userId(memberDto.getUserId())
-                .build()).getId();
-    }
-
-    //상세 정보 조회
-    //사용자의 계정정보와 권한을 갖는 UserDetails 인터페이스 반환
-    @Override
-    public MemberEntity loadUserByUsername(String userId) throws UsernameNotFoundException {
-        return memberRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException((userId)));
-    }
 
     // 회원정보 수정  Sangrok
     @Transactional
-    public boolean PatchUser(String id,MemberDto userInfo){
+    public boolean PatchUser(String id, MemberDto userInfo){
 
         final Optional<MemberDao> optMember =memberRepository.findByUserId(id);
         MemberDao fetchedUser = optMember.get();
@@ -70,8 +43,8 @@ public class MemberService implements UserDetailsService {
         if (userInfo.getEmail() != null){ // 이메일 수정.
             fetchedUser.setEmail(userInfo.getEmail());
            }
-        if (userInfo.getPhone_number() != null){ // 핸드폰 번호 수정
-            fetchedUser.setPhone_number(userInfo.getPhone_number());
+        if (userInfo.getPhoneNumber() != null){ // 핸드폰 번호 수정
+            fetchedUser.setPhoneNumber(userInfo.getPhoneNumber());
         }
 
         memberRepository.save(fetchedUser); // 저장.
@@ -81,5 +54,5 @@ public class MemberService implements UserDetailsService {
     }
 
 }
-*/
+
 

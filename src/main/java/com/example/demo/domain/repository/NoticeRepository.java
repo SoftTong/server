@@ -1,7 +1,6 @@
-/*
 package com.example.demo.domain.repository;
 
-import com.example.demo.domain.entity.MemberEntity;
+import com.example.demo.dao.MemberDao;
 import com.example.demo.domain.entity.NoticeEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +17,5 @@ public interface NoticeRepository extends JpaRepository<NoticeEntity, Long> {
     // 마감기한으로 찾기
     List<NoticeEntity> findByDestDay(Date destDay);
     // 작성자 아디로 찾기
-    List<NoticeEntity> findByMemberEntity(MemberEntity memberEntity);
+    List<NoticeEntity> findByMemberDao(MemberDao memberDao);
 }
-*/
