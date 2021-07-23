@@ -8,7 +8,7 @@ import org.w3c.dom.Text;
 import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Timestamp;
-
+/*
 @Entity
 @Getter @Setter
 @Table(name = "file_board")
@@ -36,3 +36,4 @@ public class NoticeEntity {
     @JoinColumn(name = "user_id")
     private MemberEntity memberEntity;
 }
+*/

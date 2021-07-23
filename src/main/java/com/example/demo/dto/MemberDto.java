@@ -1,5 +1,5 @@
 package com.example.demo.dto;
-
+/*
 import com.example.demo.domain.entity.MemberEntity;
 import lombok.*;
 
@@ -20,3 +20,4 @@ public class MemberDto {
     private String department;
     private String status;
 }
+*/

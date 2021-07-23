@@ -1,5 +1,5 @@
 package com.example.demo.controller;
-
+/*
 import com.example.demo.domain.entity.NoticeEntity;
 import com.example.demo.domain.repository.NoticeRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,3 +31,4 @@ public class NoticeController {
         return noticeRepository.findAll(page);
     }
 }
+*/

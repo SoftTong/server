@@ -20,5 +20,21 @@ spring:
     show-sql: true
     hibernate.ddl-auto: create
 
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+    time-zone: UTC
 
-logging.level.com.example: info
+logging:
+  level:
+    com:
+      example: info
+    org:
+      hibernate:
+        SQL: DEBUG
+
+app:
+  jwtExpirationInMs: 604800000
+  jwtSecret: JWTSuperSecretKeyHelloWorldJWTSuperSecretKeyHelloWorldJWTSuperSecretKeyHelloWorldJWTSuperSecretKeyHelloWorldJWTSuperSecretKeyHelloWorld
+
+# logging.level.com.example: info

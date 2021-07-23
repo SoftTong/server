@@ -1,5 +1,5 @@
 package com.example.demo.controller;
-
+/*
 import java.security.Principal;
 import java.util.Map;
 import java.util.HashMap;
@@ -9,7 +9,7 @@ import ch.qos.logback.core.CoreConstants;
 import com.example.demo.domain.entity.MemberEntity;
 import com.example.demo.domain.repository.MemberRepository;
 import com.example.demo.dto.MemberDto;
-import com.example.demo.service.MemberService;
+//import com.example.demo.service.MemberService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 
 @Slf4j
 @Controller
@@ -80,4 +81,4 @@ public class MemberController {
 
 
 }
-
+*/
