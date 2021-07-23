@@ -1,5 +1,5 @@
 package com.example.demo.controller;
-
+/*
 import com.example.demo.domain.entity.NoticeEntity;
 import com.example.demo.domain.repository.NoticeRepository;
 import com.example.demo.dto.NoticeDto;
@@ -39,3 +39,4 @@ public class NoticeController {
         return postInfo;
     }
 }
+*/

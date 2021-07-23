@@ -13,7 +13,7 @@ import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
+/*
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
@@ -26,7 +26,6 @@ public class MemberEntity implements UserDetails {
 
     @Column(length = 30, nullable = false)
     private String userId;
-
 
     @Column(length = 50, nullable = false)
     private String email;
@@ -108,3 +107,4 @@ public class MemberEntity implements UserDetails {
         return true; // true -> 사용 가능
     }
 }
+*/

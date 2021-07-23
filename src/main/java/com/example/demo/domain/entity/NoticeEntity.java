@@ -11,7 +11,7 @@ import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
-
+/*
 @Entity
 @Getter @Setter
 @Table(name = "file_board")
@@ -52,3 +52,4 @@ public class NoticeEntity {
     }
 
 }
+*/

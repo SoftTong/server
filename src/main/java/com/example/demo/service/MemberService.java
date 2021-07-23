@@ -1,5 +1,6 @@
 package com.example.demo.service;
-
+/*
+import com.example.demo.dao.MemberDao;
 import com.example.demo.domain.Role;
 import com.example.demo.domain.entity.MemberEntity;
 import com.example.demo.domain.repository.MemberRepository;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 @AllArgsConstructor
@@ -56,8 +58,8 @@ public class MemberService implements UserDetailsService {
     @Transactional
     public boolean PatchUser(String id,MemberDto userInfo){
 
-        final Optional<MemberEntity> optMember =memberRepository.findByUserId(id);
-        MemberEntity fetchedUser = optMember.get();
+        final Optional<MemberDao> optMember =memberRepository.findByUserId(id);
+        MemberDao fetchedUser = optMember.get();
 
         if (userInfo.getPassword() != null){ // 비밀번호 수정.
             fetchedUser.setPassword(userInfo.getPassword());
@@ -79,3 +81,5 @@ public class MemberService implements UserDetailsService {
     }
 
 }
+*/
+

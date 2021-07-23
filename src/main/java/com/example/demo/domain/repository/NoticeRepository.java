@@ -1,3 +1,4 @@
+/*
 package com.example.demo.domain.repository;
 
 import com.example.demo.domain.entity.MemberEntity;
@@ -19,3 +20,4 @@ public interface NoticeRepository extends JpaRepository<NoticeEntity, Long> {
     // 작성자 아디로 찾기
     List<NoticeEntity> findByMemberEntity(MemberEntity memberEntity);
 }
+*/
