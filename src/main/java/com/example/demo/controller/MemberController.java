@@ -6,12 +6,17 @@ import java.util.HashMap;
 import java.util.Optional;
 
 import ch.qos.logback.core.CoreConstants;
+import com.example.demo.config.security.JwtAuthenticationFilter;
+import com.example.demo.config.security.JwtTokenProvider;
+import com.example.demo.dao.MemberDao;
 import com.example.demo.domain.repository.MemberRepository;
 import com.example.demo.dto.MemberDto;
 import com.example.demo.service.MemberService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -28,7 +33,9 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 public class MemberController {
 
+    @Autowired
     private final MemberService memberService;
+    @Autowired
     private final MemberRepository memberRepository;
 
     @ResponseBody
@@ -38,6 +45,14 @@ public class MemberController {
         memberService.PatchUser(id,userInfo);
 
         return userInfo;
+    }
+
+    @Secured({"ROLE_USER","ROLE_ADMIN"})
+    @ResponseBody
+    @GetMapping(value= "/user/current")//현재 사용자 정보 받아오기
+    public Optional<MemberDao> currentUserInfo(HttpServletRequest request){
+
+        return memberService.GetCurrentUserInfo(request);
     }
 
 
