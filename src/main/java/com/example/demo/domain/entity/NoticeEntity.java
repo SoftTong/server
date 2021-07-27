@@ -42,7 +42,7 @@ public class NoticeEntity {
     private MemberDao memberDao;
 
     @Builder
-    public NoticeEntity(String name, String content, String tag1, String tag2, String tag3, Date startDay, Date destDay) {
+    public NoticeEntity(MemberDao memberDao,String name, String content, String tag1, String tag2, String tag3, Date startDay, Date destDay) {
       this.name=name;
       this.content=content;
       this.tag1=tag1;
@@ -50,6 +50,7 @@ public class NoticeEntity {
       this.tag3=tag3;
       this.startDay=startDay;
       this.destDay=destDay;
+      this.memberDao=memberDao;
     }
 
 }

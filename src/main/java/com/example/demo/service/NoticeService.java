@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
+import com.example.demo.dao.MemberDao;
 import com.example.demo.domain.entity.NoticeEntity;
 import com.example.demo.domain.repository.NoticeRepository;
+import com.example.demo.dto.MemberDto;
 import com.example.demo.dto.NoticeDto;
 
 import javax.transaction.Transactional;
@@ -16,7 +18,7 @@ public class NoticeService {
 
 
     @Transactional
-    public NoticeDto newPostBoard(NoticeDto noticeInfo){
+    public NoticeDto newPostBoard(MemberDao user, NoticeDto noticeInfo){
 
         NoticeEntity temp = noticeRepository.save(NoticeEntity.builder()
                 .name(noticeInfo.getName())
@@ -26,9 +28,8 @@ public class NoticeService {
                 .tag3(noticeInfo.getTag3())
                 .startDay(noticeInfo.getStartDay())
                 .destDay(noticeInfo.getDestDay())
+                .memberDao(user)
                 .build());
-
-        System.out.println(temp);
 
         return noticeInfo;
     }
