@@ -43,7 +43,7 @@ public class NoticeController {
 
     @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
-    @PostMapping("/newpost/board")
+    @PostMapping("/file/board")
     public NoticeDto postBoard(HttpServletRequest request, @RequestBody NoticeDto postInfo) {
 
         MemberDao user = memberService.GetCurrentUserInfo(request).get();

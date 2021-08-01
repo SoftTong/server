@@ -22,7 +22,7 @@ public class NoticeService {
 
         NoticeEntity temp = noticeRepository.save(NoticeEntity.builder()
                 .name(noticeInfo.getName())
-                .content(noticeInfo.getContent())
+                .swurl(noticeInfo.getSwurl())
                 .tag1(noticeInfo.getTag1())
                 .tag2(noticeInfo.getTag2())
                 .tag3(noticeInfo.getTag3())

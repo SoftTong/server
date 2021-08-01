@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 @Setter
 public class NoticeDto {
     private String name;
-    private String content;
+    private String swurl;
     private String tag1;
     private String tag2;
     private String tag3;

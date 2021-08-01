@@ -24,7 +24,7 @@ public class NoticeEntity {
 
     private String name;
 
-    private String content;
+    private String swurl;
 
     private String tag1;
     private String tag2;
@@ -42,9 +42,9 @@ public class NoticeEntity {
     private MemberDao memberDao;
 
     @Builder
-    public NoticeEntity(MemberDao memberDao,String name, String content, String tag1, String tag2, String tag3, Date startDay, Date destDay) {
+    public NoticeEntity(MemberDao memberDao,String name, String swurl, String tag1, String tag2, String tag3, Date startDay, Date destDay) {
       this.name=name;
-      this.content=content;
+      this.swurl=swurl;
       this.tag1=tag1;
       this.tag2=tag2;
       this.tag3=tag3;
