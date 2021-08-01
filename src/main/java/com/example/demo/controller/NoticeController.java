@@ -1,10 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.config.security.JwtAuthenticationFilter;
 import com.example.demo.dao.MemberDao;
 import com.example.demo.domain.entity.NoticeEntity;
 import com.example.demo.domain.repository.NoticeRepository;
-import com.example.demo.dto.MemberDto;
 import com.example.demo.dto.NoticeDto;
 import com.example.demo.service.MemberService;
 import com.example.demo.service.NoticeService;
@@ -18,11 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.swing.plaf.metal.MetalMenuBarUI;
-import java.lang.reflect.Member;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
@@ -39,6 +32,17 @@ public class NoticeController {
     public Page<NoticeEntity> notice(@PathVariable int pageNum) {
         Pageable page = PageRequest.of(pageNum, 10, Sort.by("uploadDay").descending());
         return noticeRepository.findAll(page);
+    }
+
+    @ResponseBody
+    @GetMapping("/detail/{noticeNum}")
+    public NoticeEntity detail(@PathVariable Long noticeNum) {
+        NoticeEntity findNotice = noticeRepository.getById(noticeNum);
+        if (findNotice == null) {
+            // 존재하지 않는 숫자가 넘어왔을 때
+            throw new IllegalStateException("해당 게시글이 존재하지 않습니다.");
+        }
+        return findNotice;
     }
 
     @Secured({"ROLE_USER","ROLE_ADMIN"})
