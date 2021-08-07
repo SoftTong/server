@@ -38,8 +38,11 @@ public class NoticeEntity {
     private int viewCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "member_id")
     private MemberDao memberDao;
+
+    protected NoticeEntity() {
+    }
 
     @Builder
     public NoticeEntity(MemberDao memberDao,String name, String swurl, String tag1, String tag2, String tag3, Date startDay, Date destDay) {

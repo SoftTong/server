@@ -7,6 +7,7 @@ import com.example.demo.dto.NoticeDto;
 import com.example.demo.service.MemberService;
 import com.example.demo.service.NoticeService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+@Slf4j
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/notice")
@@ -31,6 +33,8 @@ public class NoticeController {
     @GetMapping("/{pageNum}")
     public Page<NoticeEntity> notice(@PathVariable int pageNum) {
         Pageable page = PageRequest.of(pageNum, 10, Sort.by("uploadDay").descending());
+        log.info("notice = {}", noticeRepository.findAll(page));
+
         return noticeRepository.findAll(page);
     }
 
