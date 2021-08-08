@@ -38,7 +38,7 @@ public class NoticeEntity {
     private int viewCount;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "member_id")
     private MemberDao memberDao;
 
     @Builder
