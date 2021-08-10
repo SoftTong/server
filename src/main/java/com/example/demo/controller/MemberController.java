@@ -38,11 +38,13 @@ public class MemberController {
     @Autowired
     private final MemberRepository memberRepository;
 
+    @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
-    @PatchMapping(value= "/user/{id}")// 회원정보 수정 Patch
-    public MemberDto modifyUserInfo(@PathVariable(value="id") String id, @RequestBody MemberDto userInfo){
+    @PatchMapping(value= "/user")// 회원정보 수정 Patch
+    public MemberDto modifyUserInfo(@RequestBody MemberDto userInfo, HttpServletRequest request){
 
-        memberService.PatchUser(id,userInfo);
+        String currentUserId = memberService.GetCurrentUserInfo(request).get().getUserId();
+        memberService.PatchUser(currentUserId,userInfo);
 
         return userInfo;
     }
