@@ -6,6 +6,7 @@ spring:
   output.ansi.enabled: always
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
+
 #    url: jdbc:mysql://localhost:3306/sotong?serverTimezone=UTC&characterEncoding=UTF-8
 #    username: root
 #    password: root1234

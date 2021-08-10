@@ -4,19 +4,19 @@ import com.example.demo.dao.MemberDao;
 import com.example.demo.domain.entity.NoticeEntity;
 import com.example.demo.domain.repository.NoticeRepository;
 import com.example.demo.dto.NoticeDto;
+import com.example.demo.dto.NoticeInfoDto;
 import com.example.demo.service.MemberService;
 import com.example.demo.service.NoticeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
+
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,11 +31,13 @@ public class NoticeController {
 
     @ResponseBody
     @GetMapping("/{pageNum}")
-    public Page<NoticeEntity> notice(@PathVariable int pageNum) {
+    public Page<NoticeInfoDto> notice(@PathVariable int pageNum) {
         Pageable page = PageRequest.of(pageNum, 10, Sort.by("uploadDay").descending());
-        log.info("notice = {}", noticeRepository.findAll(page));
 
-        return noticeRepository.findAll(page);
+        Page<NoticeEntity> noticeEntityPages = noticeRepository.findAll(page);
+        List<NoticeInfoDto> noticeInfoDtoList = noticeEntityPages.stream().map(nep -> new NoticeInfoDto(nep)).collect((toList()));
+
+        return new PageImpl<>(noticeInfoDtoList,page,noticeInfoDtoList.size());
     }
 
     @ResponseBody
