@@ -6,19 +6,19 @@ spring:
   output.ansi.enabled: always
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/sotong?serverTimezone=UTC&characterEncoding=UTF-8
-    username: root
-    password: root1234
+#    url: jdbc:mysql://localhost:3306/bank?serverTimezone=Asia/Seoul
+#    username: root
+#    password: swroot1116
 
-    # docker
-#    url: jdbc:mysql://mysql:3306/sotong?serverTimezone=UTC&characterEncoding=UTF-8
-#    username: sotong
-#    password: sotong
+#       docker
+      url: jdbc:mysql://mysql:3306/sotong?serverTimezone=UTC&characterEncoding=UTF-8
+      username: sotong
+      password: sotong
 
 
   jpa:
     show-sql: true
-    hibernate.ddl-auto: create
+    hibernate.ddl-auto: update
 
   jackson:
     serialization:

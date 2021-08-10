@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.logging.log4j.message.TimestampMessage;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 import org.w3c.dom.Text;
 
@@ -38,19 +39,24 @@ public class NoticeEntity {
     private int viewCount;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @BatchSize(size = 10)
     @JoinColumn(name = "member_id")
     private MemberDao memberDao;
 
+    protected NoticeEntity() {
+
+    }
+
     @Builder
     public NoticeEntity(MemberDao memberDao,String name, String swurl, String tag1, String tag2, String tag3, Date startDay, Date destDay) {
-      this.name=name;
-      this.swurl=swurl;
-      this.tag1=tag1;
-      this.tag2=tag2;
-      this.tag3=tag3;
-      this.startDay=startDay;
-      this.destDay=destDay;
-      this.memberDao=memberDao;
+        this.name=name;
+        this.swurl=swurl;
+        this.tag1=tag1;
+        this.tag2=tag2;
+        this.tag3=tag3;
+        this.startDay=startDay;
+        this.destDay=destDay;
+        this.memberDao=memberDao;
     }
 
 }
