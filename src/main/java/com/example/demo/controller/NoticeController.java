@@ -37,7 +37,7 @@ public class NoticeController {
         Page<NoticeEntity> noticeEntityPages = noticeRepository.findAll(page);
         List<NoticeInfoDto> noticeInfoDtoList = noticeEntityPages.stream().map(nep -> new NoticeInfoDto(nep)).collect((toList()));
 
-        return new PageImpl<>(noticeInfoDtoList,page,noticeInfoDtoList.size());
+        return new PageImpl<>(noticeInfoDtoList, page, noticeEntityPages.getTotalElements());
     }
 
     @ResponseBody
