@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -39,6 +40,8 @@ public class MemberService {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     @Autowired
     private final JwtTokenProvider jwtTokenProvider;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     // 회원정보 수정  Sangrok
     @Transactional
@@ -48,7 +51,7 @@ public class MemberService {
         MemberDao fetchedUser = optMember.get();
 
         if (userInfo.getPassword() != null){ // 비밀번호 수정.
-            fetchedUser.setPassword(userInfo.getPassword());
+            fetchedUser.setPassword(passwordEncoder.encode(userInfo.getPassword()));
         }
         if (userInfo.getName() != null){ // 이름 수정.
             fetchedUser.setName(userInfo.getName());
