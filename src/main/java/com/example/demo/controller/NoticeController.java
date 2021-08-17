@@ -42,13 +42,14 @@ public class NoticeController {
 
     @ResponseBody
     @GetMapping("/detail/{noticeNum}")
-    public NoticeEntity detail(@PathVariable Long noticeNum) {
+    public NoticeInfoDto detail(@PathVariable Long noticeNum) {
         NoticeEntity findNotice = noticeRepository.getById(noticeNum);
         if (findNotice == null) {
             // 존재하지 않는 숫자가 넘어왔을 때
             throw new IllegalStateException("해당 게시글이 존재하지 않습니다.");
         }
-        return findNotice;
+        NoticeInfoDto notice = new NoticeInfoDto(findNotice);
+        return notice;
     }
 
     @Secured({"ROLE_USER","ROLE_ADMIN"})
