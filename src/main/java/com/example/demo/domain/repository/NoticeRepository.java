@@ -5,6 +5,8 @@ import com.example.demo.domain.entity.NoticeEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -18,4 +20,8 @@ public interface NoticeRepository extends JpaRepository<NoticeEntity, Long> {
     List<NoticeEntity> findByDestDay(Date destDay);
     // 작성자 아디로 찾기
     List<NoticeEntity> findByMemberDao(MemberDao memberDao);
+
+    // 데이터 타입 찾기 (첨부파일 or 폼 형식)
+    @Query(value = "select n.dtype from notice n where n.id = ?1", nativeQuery = true)
+    Object findDtypeById(Long noticeId);
 }

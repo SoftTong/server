@@ -1,18 +1,16 @@
 package com.example.demo.dto;
 
+
 import com.example.demo.domain.entity.FileNotice;
-import com.example.demo.domain.entity.FormNotice;
-import com.example.demo.domain.entity.NoticeEntity;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Date;
 import java.sql.Timestamp;
 
-@Getter
-@Setter
-public class NoticeInfoDto {
+
+@Getter @Setter
+public class FileNoticeDto {
+    // 첨부파일 형식 공지사항 Dto
     private Long id;
     private String name;
     private String swurl;
@@ -24,13 +22,14 @@ public class NoticeInfoDto {
     private Date destDay;
     private int viewCount;
     private String authorName;
+    private Boolean isForm;
 
-    public NoticeInfoDto() {
+    public FileNoticeDto() {
 
     }
 
     @Builder
-    public NoticeInfoDto(NoticeEntity noticeEntity) {
+    public FileNoticeDto(FileNotice noticeEntity, Boolean isForm) {
         this.id = noticeEntity.getId();
         this.name = noticeEntity.getName();
         this.swurl = noticeEntity.getSwurl();
@@ -42,5 +41,6 @@ public class NoticeInfoDto {
         this.destDay = noticeEntity.getDestDay();
         this.viewCount = noticeEntity.getViewCount();
         this.authorName = noticeEntity.getMemberDao().getName();
+        this.isForm = isForm;
     }
 }

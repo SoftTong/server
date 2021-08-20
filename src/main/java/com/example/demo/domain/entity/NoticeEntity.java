@@ -1,24 +1,23 @@
 package com.example.demo.domain.entity;
 
 import com.example.demo.dao.MemberDao;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.logging.log4j.message.TimestampMessage;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
-import org.w3c.dom.Text;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.sql.Time;
 import java.sql.Timestamp;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "file_board")
-public class NoticeEntity {
+@Table(name = "notice")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "dtype")
+public abstract class NoticeEntity {
+    // 추상 클래스이기 때문에 빌더 x -> 폼 형식이면 FormNotice, 첨부 파일 형식이면 FileNotice 사용
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -45,18 +44,6 @@ public class NoticeEntity {
 
     protected NoticeEntity() {
 
-    }
-
-    @Builder
-    public NoticeEntity(MemberDao memberDao,String name, String swurl, String tag1, String tag2, String tag3, Date startDay, Date destDay) {
-        this.name=name;
-        this.swurl=swurl;
-        this.tag1=tag1;
-        this.tag2=tag2;
-        this.tag3=tag3;
-        this.startDay=startDay;
-        this.destDay=destDay;
-        this.memberDao=memberDao;
     }
 
 }
