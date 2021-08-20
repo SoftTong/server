@@ -53,7 +53,7 @@ public class NoticeController {
 
         if (dtype.equals("file")) { // FileNotice 타입일 때
 
-            FileNotice fileNotice = getFileNotice(noticeNum);
+            FileNotice fileNotice = noticeService.getFileNotice(noticeNum);
             FileNoticeDto fileNoticeDto = new FileNoticeDto(fileNotice, Boolean.FALSE); // File 타입이므로 False를 같이 넘김
             log.debug("fileNotice입니다.");
 
@@ -61,7 +61,7 @@ public class NoticeController {
 
         } else if (dtype.equals("form")) { // FormNotice 타입일 때
 
-            FormNotice formNotice = getFormNotice(noticeNum);
+            FormNotice formNotice = noticeService.getFormNotice(noticeNum);
             FormNoticeDto formNoticeDto = new FormNoticeDto(formNotice, Boolean.TRUE); // Form 타입이므로 True를 같이 넘김
             log.debug("formNotice입니다.");
 
@@ -70,22 +70,6 @@ public class NoticeController {
             log.debug("올바르지 않은 공지사항입니다.");
             throw new IllegalStateException("해당 게시글이 존재하지 않습니다.");
         }
-    }
-
-    // Proxy 객체에서 실제 구현체 값을 가져오는 메서드
-    private FormNotice getFormNotice(Long noticeNum) {
-        HibernateProxy hibernateProxy = (HibernateProxy) noticeRepository.getById(noticeNum);
-        LazyInitializer initializer = hibernateProxy.getHibernateLazyInitializer();
-        FormNotice formNotice = (FormNotice) initializer.getImplementation();
-        return formNotice;
-    }
-
-    // Proxy 객체에서 실제 구현체 값을 가져오는 메서드
-    private FileNotice getFileNotice(Long noticeNum) {
-        HibernateProxy hibernateProxy = (HibernateProxy) noticeRepository.getById(noticeNum);
-        LazyInitializer initializer = hibernateProxy.getHibernateLazyInitializer();
-        FileNotice fileNotice = (FileNotice) initializer.getImplementation();
-        return fileNotice;
     }
 
     // 관리자가 첨부 파일 형식의 공지사항 작성할 때

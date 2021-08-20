@@ -20,6 +20,8 @@ public interface NoticeRepository extends JpaRepository<NoticeEntity, Long> {
     List<NoticeEntity> findByDestDay(Date destDay);
     // 작성자 아디로 찾기
     List<NoticeEntity> findByMemberDao(MemberDao memberDao);
+    //id로 찾기
+    Optional<NoticeEntity> findById(Long id);
 
     // 데이터 타입 찾기 (첨부파일 or 폼 형식)
     @Query(value = "select n.dtype from notice n where n.id = ?1", nativeQuery = true)
