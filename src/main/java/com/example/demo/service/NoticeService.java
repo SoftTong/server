@@ -1,8 +1,8 @@
 package com.example.demo.service;
 
 import com.example.demo.dao.MemberDao;
-import com.example.demo.domain.entity.FileNotice;
-import com.example.demo.domain.entity.FormNotice;
+import com.example.demo.domain.entity.*;
+import com.example.demo.domain.repository.ApplyFileRepository;
 import com.example.demo.domain.repository.NoticeRepository;
 import com.example.demo.dto.FormNoticeDto;
 import com.example.demo.dto.FileNoticeDto;
@@ -10,14 +10,13 @@ import com.example.demo.dto.FileNoticeDto;
 import javax.transaction.Transactional;
 
 import lombok.AllArgsConstructor;
-import org.hibernate.proxy.HibernateProxy;
-import org.hibernate.proxy.LazyInitializer;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
 public class NoticeService {
     private NoticeRepository noticeRepository;
+    private ApplyFileRepository applyFileRepository;
 
     // 첨부 파일 형식 공지사항 작성
     @Transactional
@@ -47,6 +46,13 @@ public class NoticeService {
         //FormNotice formNotice = (FormNotice) initializer.getImplementation();
         FormNotice formNotice = (FormNotice) noticeRepository.findById(noticeNum).get();
         return formNotice;
+    }
+
+    public ApplyFileNoticeEntity makeApplyFileNotice(String filePath, MemberDao memberDao, NoticeEntity noticeEntity, String fileName){
+        ApplyFileNoticeEntity applyFileNotice = new ApplyFileNoticeEntity(filePath, memberDao, noticeEntity, fileName);
+        applyFileNotice.setStatus(StatusName.wait); //처음은 대기 상태로 저장
+        applyFileRepository.save(applyFileNotice);
+        return applyFileNotice;
     }
 
 }
