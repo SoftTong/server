@@ -17,12 +17,17 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.*;
 
+import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -106,12 +111,23 @@ public class NoticeController {
         noticeService.makeFormNotice(user,postInfo);
         return postInfo;
     }
+    /*
+    @Bean(name = "multipartResolver")
+    public MultipartResolver multipartResolver() {
 
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+        multipartResolver.setMaxUploadSize(2000000000);
+        return multipartResolver;
+    }
+    */
     //사용자가 파일을 제출할때
     @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
-    @PostMapping("/file/apply")
-    public Boolean applyFileBoard(HttpServletRequest request, @RequestParam("file") MultipartFile multipartFile, @RequestParam("noticeId") Long noticeId) {
+    @PostMapping(value="/file/apply", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Boolean applyFileBoard(HttpServletRequest request, @RequestPart(name="file", required = false) MultipartFile multipartFile, @RequestParam("noticeId") Long noticeId) {
+
+        System.out.println(multipartFile.getOriginalFilename());
+        System.out.println(noticeId);
 
         MemberDao currentMember = memberService.GetCurrentUserInfo(request).get();
         NoticeEntity noticeEntity = noticeRepository.findById(noticeId).get();

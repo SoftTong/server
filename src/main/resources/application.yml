@@ -3,6 +3,10 @@ devtools:
     enabled: true
 
 spring:
+  http:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 11MB
   output.ansi.enabled: always
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
