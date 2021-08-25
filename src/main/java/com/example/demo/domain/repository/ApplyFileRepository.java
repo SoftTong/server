@@ -18,4 +18,6 @@ public interface ApplyFileRepository extends JpaRepository<ApplyFileNoticeEntity
             countQuery = "SELECT COUNT(*) FROM apply_file n where n.notice_id=?1",
             nativeQuery = true)
     Page<ApplyFileNoticeEntity> findMemberById(Long noticeId,Pageable pageable);
+
+    Page<ApplyFileNoticeEntity> findAllByMemberDao(MemberDao memberDao, Pageable pageable);
 }

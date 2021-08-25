@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Optional;
@@ -9,13 +10,19 @@ import ch.qos.logback.core.CoreConstants;
 import com.example.demo.config.security.JwtAuthenticationFilter;
 import com.example.demo.config.security.JwtTokenProvider;
 import com.example.demo.dao.MemberDao;
+import com.example.demo.domain.entity.ApplyFileNoticeEntity;
+import com.example.demo.domain.entity.NoticeEntity;
+import com.example.demo.domain.repository.ApplyFileRepository;
 import com.example.demo.domain.repository.MemberRepository;
+import com.example.demo.dto.FileApplyDto;
 import com.example.demo.dto.MemberDto;
+import com.example.demo.dto.NoticeInfoDto;
 import com.example.demo.service.MemberService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +34,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static java.util.stream.Collectors.toList;
+
 
 @Slf4j
 @Controller
@@ -37,6 +46,8 @@ public class MemberController {
     private final MemberService memberService;
     @Autowired
     private final MemberRepository memberRepository;
+    @Autowired
+    private  final ApplyFileRepository applyFileRepository;
 
     @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
@@ -57,6 +68,16 @@ public class MemberController {
         return memberService.GetCurrentUserInfo(request);
     }
 
+    @ResponseBody
+    @GetMapping("/apply/file/{pageNum}")
+    public Page<FileApplyDto> getApplyFile(HttpServletRequest request, @PathVariable int pageNum) {
 
+        Pageable page = PageRequest.of(pageNum, 5, Sort.by("id").descending());
+        MemberDao currentMember = memberService.GetCurrentUserInfo(request).get();
+        Page<ApplyFileNoticeEntity> applyFileNoticeEntityPages = applyFileRepository.findAllByMemberDao(currentMember,page);
+        List<FileApplyDto> fileApplyDtoList = applyFileNoticeEntityPages.stream().map(p-> new FileApplyDto(p) ).collect((toList()));
+
+        return new PageImpl<>(fileApplyDtoList, page, applyFileNoticeEntityPages.getTotalElements());
+    }
 
 }
