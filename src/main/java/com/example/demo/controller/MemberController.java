@@ -72,7 +72,7 @@ public class MemberController {
     @GetMapping("/apply/file/{pageNum}")
     public Page<FileApplyDto> getApplyFile(HttpServletRequest request, @PathVariable int pageNum) {
 
-        Pageable page = PageRequest.of(pageNum, 5, Sort.by("id").descending());
+        Pageable page = PageRequest.of(pageNum, 10, Sort.by("id").descending());
         MemberDao currentMember = memberService.GetCurrentUserInfo(request).get();
         Page<ApplyFileNoticeEntity> applyFileNoticeEntityPages = applyFileRepository.findAllByMemberDao(currentMember,page);
         List<FileApplyDto> fileApplyDtoList = applyFileNoticeEntityPages.stream().map(p-> new FileApplyDto(p) ).collect((toList()));

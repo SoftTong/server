@@ -34,7 +34,7 @@ import static java.util.stream.Collectors.toList;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@Secured({ "ROLE_ADMIN" })
+@Secured({"ROLE_USER","ROLE_ADMIN"})
 @ResponseBody
 @RequestMapping("/manage")
 public class ManagerController {
@@ -63,7 +63,7 @@ public class ManagerController {
 
     @GetMapping("/{pageNum}")
     public Page<NoticeInfoDto> getManagerPage(HttpServletRequest req, @PathVariable int pageNum) {
-        Pageable page = PageRequest.of(pageNum, 5, Sort.by("uploadDay").descending());
+        Pageable page = PageRequest.of(pageNum, 10, Sort.by("uploadDay").descending());
 
         MemberDao currentUser = memberService.GetCurrentUserInfo(req).get();
 
@@ -76,7 +76,7 @@ public class ManagerController {
 
     @GetMapping("/{noticeId}/{pageNum}")
     public Page<FileApplyDto> getNotice(@PathVariable Long noticeId,@PathVariable int pageNum) {
-        Pageable page = PageRequest.of(pageNum, 5, Sort.by("member_id").ascending());
+        Pageable page = PageRequest.of(pageNum, 10, Sort.by("member_id").ascending());
 
         Page<ApplyFileNoticeEntity> applyPages = applyFileRepository.findMemberById(noticeId,page);
         List<FileApplyDto> fileApplyDtoList = applyPages.stream().map(a-> new FileApplyDto(a) ).collect((toList()));
