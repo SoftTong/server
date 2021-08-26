@@ -24,10 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -75,14 +72,21 @@ public class ManagerController {
 
 
     @GetMapping("/{noticeId}/{pageNum}")
-    public Page<FileApplyDto> getNotice(@PathVariable Long noticeId,@PathVariable int pageNum) {
+    public PageImpl<Object> getNotice(@PathVariable Long noticeId, @PathVariable int pageNum) {
         Pageable page = PageRequest.of(pageNum, 10, Sort.by("member_id").ascending());
 
-        Page<ApplyFileNoticeEntity> applyPages = applyFileRepository.findMemberById(noticeId,page);
-        List<FileApplyDto> fileApplyDtoList = applyPages.stream().map(a-> new FileApplyDto(a) ).collect((toList()));
+        String dtype = (String) noticeRepository.findDtypeById(noticeId);
 
+        if (dtype.equals("file")) {
+            Page<ApplyFileNoticeEntity> applyPages = applyFileRepository.findMemberById(noticeId,page);
+            List<FileApplyDto> fileApplyDtoList = applyPages.stream().map(a-> new FileApplyDto(a) ).collect((toList()));
+            return new PageImpl(fileApplyDtoList, page, applyPages.getTotalElements());
+        } else if (dtype.equals("form")) {
+            throw new IllegalStateException("폼 형식은 아직 구현되지 않았습니다.");
+        } else {
+            throw new IllegalStateException("올바르지 않은 공지사항입니다.");
+        }
 
-        return new PageImpl<>(fileApplyDtoList, page, applyPages.getTotalElements());
     }
 
 
