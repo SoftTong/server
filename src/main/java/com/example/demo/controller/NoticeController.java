@@ -18,9 +18,12 @@ import org.apache.commons.io.FilenameUtils;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.*;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +34,11 @@ import org.springframework.web.multipart.support.StandardServletMultipartResolve
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -111,15 +117,7 @@ public class NoticeController {
         noticeService.makeFormNotice(user,postInfo);
         return postInfo;
     }
-    /*
-    @Bean(name = "multipartResolver")
-    public MultipartResolver multipartResolver() {
 
-        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
-        multipartResolver.setMaxUploadSize(2000000000);
-        return multipartResolver;
-    }
-    */
     //사용자가 파일을 제출할때
     @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
@@ -148,5 +146,24 @@ public class NoticeController {
         }
 
         return false;
+    }
+
+    @RequestMapping("/download/file/{fileName:.+}")
+    public ResponseEntity<InputStreamResource> downloadFile(@PathVariable String fileName) throws IOException {
+
+        System.out.println(fileName);
+
+        String path = "src/main/resources/menufiles/"+fileName;
+        File file = new File(path);
+        HttpHeaders header = new HttpHeaders();
+
+        header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+fileName);
+        header.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        header.add("Pragma", "no-cache");
+        header.add("Expires", "0");
+
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+
+        return ResponseEntity.ok() .headers(header) .contentLength(file.length()) .contentType(MediaType.parseMediaType("application/octet-stream")) .body(resource);
     }
 }
