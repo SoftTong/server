@@ -29,4 +29,9 @@ public interface NoticeRepository extends JpaRepository<NoticeEntity, Long> {
     // 데이터 타입 찾기 (첨부파일 or 폼 형식)
     @Query(value = "select n.dtype from notice n where n.id = ?1", nativeQuery = true)
     Object findDtypeById(Long noticeId);
+
+//    @Query(value = "select n from notice n where n.name like '%?1%'", nativeQuery = false)
+//    Page<NoticeEntity> findByName(String searchWord, Pageable pageable);
+
+    Page<NoticeEntity> findByNameContaining(String searchWord, Pageable pageable);
 }

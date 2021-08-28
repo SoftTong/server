@@ -58,13 +58,23 @@ public class NoticeController {
 
     @ResponseBody
     @GetMapping("/{pageNum}")
-    public Page<NoticeInfoDto> notice(@PathVariable int pageNum) {
-        Pageable page = PageRequest.of(pageNum, 10, Sort.by("uploadDay").descending());
+    public Page<NoticeInfoDto> notice(@PathVariable int pageNum, @RequestParam(required = false) String searchWord) {
+        if (searchWord == null) {
+            Pageable page = PageRequest.of(pageNum, 10, Sort.by("uploadDay").descending());
 
-        Page<NoticeEntity> noticeEntityPages = noticeRepository.findAll(page);
-        List<NoticeInfoDto> noticeInfoDtoList = noticeEntityPages.stream().map(nep -> new NoticeInfoDto(nep)).collect((toList()));
+            Page<NoticeEntity> noticeEntityPages = noticeRepository.findAll(page);
+            List<NoticeInfoDto> noticeInfoDtoList = noticeEntityPages.stream().map(nep -> new NoticeInfoDto(nep)).collect((toList()));
 
-        return new PageImpl<>(noticeInfoDtoList, page, noticeEntityPages.getTotalElements());
+            return new PageImpl<>(noticeInfoDtoList, page, noticeEntityPages.getTotalElements());
+
+        } else {
+            Pageable page = PageRequest.of(pageNum, 10, Sort.by("uploadDay").descending());
+
+            Page<NoticeEntity> noticeEntityPages = noticeRepository.findByNameContaining(searchWord, page);
+            List<NoticeInfoDto> noticeInfoDtoList = noticeEntityPages.stream().map(nep -> new NoticeInfoDto(nep)).collect((toList()));
+
+            return new PageImpl<>(noticeInfoDtoList, page, noticeEntityPages.getTotalElements());
+        }
     }
 
     @ResponseBody
