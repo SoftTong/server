@@ -59,7 +59,7 @@ public class NoticeController {
     @ResponseBody
     @GetMapping("/{pageNum}")
     public Page<NoticeInfoDto> notice(@PathVariable int pageNum, @RequestParam(required = false) String searchWord) {
-        if (searchWord == null) {
+        if (searchWord == null) { // 검색어가 없는 기본 상태
             Pageable page = PageRequest.of(pageNum, 10, Sort.by("uploadDay").descending());
 
             Page<NoticeEntity> noticeEntityPages = noticeRepository.findAll(page);
@@ -67,7 +67,8 @@ public class NoticeController {
 
             return new PageImpl<>(noticeInfoDtoList, page, noticeEntityPages.getTotalElements());
 
-        } else {
+        } else { // 검색어가 있는 상태, 검색 완료 후 해당 게시글들이 존재하지 않는 다면 content안에 아무것도 안담김
+            // 그러면 프론트쪽에서 content가 비어있는 것을 토대로 검색결과가 없다는 메세지를 출력
             Pageable page = PageRequest.of(pageNum, 10, Sort.by("uploadDay").descending());
 
             Page<NoticeEntity> noticeEntityPages = noticeRepository.findByNameContaining(searchWord, page);
