@@ -4,8 +4,10 @@ import com.example.demo.dao.MemberDao;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Getter
@@ -19,10 +21,6 @@ public class ApplyFileNoticeEntity {
 
     private String filePath;
 
-    //private Long memberId;
-
-    //private Long fileNoticeId;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @BatchSize(size = 10)
     @JoinColumn(name = "member_id")
@@ -34,6 +32,9 @@ public class ApplyFileNoticeEntity {
     private NoticeEntity noticeEntity;
 
     private String fileName;
+
+    @CreationTimestamp
+    private Timestamp uploadDay;
 
     @Enumerated(EnumType.STRING)
     @Column(name="status")
