@@ -16,6 +16,7 @@ import java.sql.Timestamp;
 @Setter
 @ToString
 public class FileApplyDto {
+    private String noticeTitle;
     private String fileName;
     private String filePath;
     private StatusName status;
@@ -26,6 +27,7 @@ public class FileApplyDto {
 
 
     public FileApplyDto(ApplyFileNoticeEntity apply){
+        this.noticeTitle = apply.getNoticeEntity().getName();
         this.fileName=apply.getFileName();
         this.filePath=apply.getFilePath();
         this.status = apply.getStatus();
