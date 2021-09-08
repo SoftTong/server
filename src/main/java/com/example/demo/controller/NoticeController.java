@@ -5,6 +5,7 @@ import com.example.demo.domain.entity.ApplyFileNoticeEntity;
 import com.example.demo.domain.entity.FileNotice;
 import com.example.demo.domain.entity.FormNotice;
 import com.example.demo.domain.entity.NoticeEntity;
+import com.example.demo.domain.repository.MemberRepository;
 import com.example.demo.domain.repository.NoticeRepository;
 import com.example.demo.dto.FormNoticeDto;
 import com.example.demo.dto.FileNoticeDto;
@@ -39,6 +40,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -54,28 +56,74 @@ public class NoticeController {
     private final NoticeService noticeService;
     private final NoticeRepository noticeRepository;
 
+    private final MemberRepository memberRepository;
     private final MemberService memberService;
 
     @ResponseBody
     @GetMapping("/{pageNum}")
-    public Page<NoticeInfoDto> notice(@PathVariable int pageNum, @RequestParam(required = false) String searchWord) {
-        if (searchWord == null) { // 검색어가 없는 기본 상태
-            Pageable page = PageRequest.of(pageNum, 10, Sort.by("uploadDay").descending());
+    public Page<NoticeInfoDto> notice(@PathVariable int pageNum,
+                                      @RequestParam(required = false) String searchWord,
+                                      @RequestParam(required = true) String category) {
+        if (category.equals("title")) { // 기본 상태 ( 기본이 제목으로 검색 )
+           if (searchWord == null) {
+               // 기본 상태에서 아무것도 검색하지 않았을 때
+               Pageable page = PageRequest.of(pageNum, 10, Sort.by("uploadDay").descending());
 
-            Page<NoticeEntity> noticeEntityPages = noticeRepository.findAll(page);
-            List<NoticeInfoDto> noticeInfoDtoList = noticeEntityPages.stream().map(nep -> new NoticeInfoDto(nep)).collect((toList()));
+               Page<NoticeEntity> noticeEntityPages = noticeRepository.findAll(page);
+               List<NoticeInfoDto> noticeInfoDtoList = noticeEntityPages.stream().map(nep -> new NoticeInfoDto(nep)).collect((toList()));
 
-            return new PageImpl<>(noticeInfoDtoList, page, noticeEntityPages.getTotalElements());
+               return new PageImpl<>(noticeInfoDtoList, page, noticeEntityPages.getTotalElements());
+           } else {
+               // 검색어가 있는 상태
+               Pageable page = PageRequest.of(pageNum, 10, Sort.by("uploadDay").descending());
 
-        } else { // 검색어가 있는 상태, 검색 완료 후 해당 게시글들이 존재하지 않는 다면 content안에 아무것도 안담김
-            // 그러면 프론트쪽에서 content가 비어있는 것을 토대로 검색결과가 없다는 메세지를 출력
-            Pageable page = PageRequest.of(pageNum, 10, Sort.by("uploadDay").descending());
+               Page<NoticeEntity> noticeEntityPages = noticeRepository.findByNameContaining(searchWord, page);
+               List<NoticeInfoDto> noticeInfoDtoList = noticeEntityPages.stream().map(nep -> new NoticeInfoDto(nep)).collect((toList()));
 
-            Page<NoticeEntity> noticeEntityPages = noticeRepository.findByNameContaining(searchWord, page);
-            List<NoticeInfoDto> noticeInfoDtoList = noticeEntityPages.stream().map(nep -> new NoticeInfoDto(nep)).collect((toList()));
-
-            return new PageImpl<>(noticeInfoDtoList, page, noticeEntityPages.getTotalElements());
+               return new PageImpl<>(noticeInfoDtoList, page, noticeEntityPages.getTotalElements());
+           }
         }
+        else if (category.equals("author")) { // 작성자 검색
+            if (searchWord == null) {
+                Pageable page = PageRequest.of(pageNum, 10, Sort.by("uploadDay").descending());
+
+                Page<NoticeEntity> noticeEntityPages = noticeRepository.findAll(page);
+                List<NoticeInfoDto> noticeInfoDtoList = noticeEntityPages.stream().map(nep -> new NoticeInfoDto(nep)).collect((toList()));
+
+                return new PageImpl<>(noticeInfoDtoList, page, noticeEntityPages.getTotalElements());
+
+            } else {
+                List<MemberDao> members = memberRepository.findByNameContaining(searchWord);
+                Pageable page = PageRequest.of(pageNum, 10, Sort.by("uploadDay").descending());
+
+                if (members.isEmpty()) {
+                    throw new IllegalStateException("존재하지 않는 작성자입니다.");
+                }
+                else if (members.size() == 1) {
+                    Page<NoticeEntity> noticeEntityPages = noticeRepository.findByMemberDao(members.get(0), page);
+                    List<NoticeInfoDto> noticeInfoDtoList = noticeEntityPages.stream().map(nep -> new NoticeInfoDto(nep)).collect((toList()));
+
+                    return new PageImpl<>(noticeInfoDtoList, page, noticeEntityPages.getTotalElements());
+                } else {
+                    List<NoticeInfoDto> noticeInfoDtoList = new ArrayList<>();
+                    int totalElements = 0;
+                    for (MemberDao member : members) {
+                        Page<NoticeEntity> nep = noticeRepository.findByMemberDao(member, page);
+                        totalElements += nep.getTotalElements();
+                        List<NoticeInfoDto> collect = nep.stream().map(n -> new NoticeInfoDto(n)).collect((toList()));
+                        noticeInfoDtoList.addAll(collect);
+                    }
+
+                    return new PageImpl<>(noticeInfoDtoList, page, totalElements);
+                }
+
+            }
+
+        }
+        else {
+            throw new IllegalStateException("카테고리가 없습니다.");
+        }
+
     }
 
     @ResponseBody

@@ -31,4 +31,5 @@ public interface NoticeRepository extends JpaRepository<NoticeEntity, Long> {
     Object findDtypeById(Long noticeId);
 
     Page<NoticeEntity> findByNameContaining(String searchWord, Pageable pageable);
+    Page<NoticeEntity> findByMemberDao(MemberDao member, Pageable pageable);
 }

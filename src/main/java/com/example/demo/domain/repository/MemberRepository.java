@@ -14,6 +14,7 @@ public interface MemberRepository extends JpaRepository<MemberDao, Long> {
     List<MemberDao> findAllByIdIn(List<Long> Ids);
     Optional<MemberDao> findByName(String name);
     Optional<MemberDao> findByUserId(String userId);
+    List<MemberDao> findByNameContaining(String name);
 
     Boolean existsByUserId(String userId);
     Boolean existsByEmail(String email);
