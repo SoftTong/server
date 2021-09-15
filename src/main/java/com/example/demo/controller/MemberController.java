@@ -77,18 +77,6 @@ public class MemberController {
     }
 
     @ResponseBody
-    @GetMapping("/apply/file/{pageNum}")
-    public Page<FileApplyDto> getApplyFile(HttpServletRequest request, @PathVariable int pageNum) {
-
-        Pageable page = PageRequest.of(pageNum, 10, Sort.by("id").descending());
-        MemberDao currentMember = memberService.GetCurrentUserInfo(request).get();
-        Page<ApplyFileNoticeEntity> applyFileNoticeEntityPages = applyFileRepository.findAllByMemberDao(currentMember,page);
-        List<FileApplyDto> fileApplyDtoList = applyFileNoticeEntityPages.stream().map(p-> new FileApplyDto(p) ).collect((toList()));
-
-        return new PageImpl<>(fileApplyDtoList, page, applyFileNoticeEntityPages.getTotalElements());
-    }
-
-    @ResponseBody
     @GetMapping("/apply/{pageNum}")
     public Page<ApplyDto> getApply(HttpServletRequest request, @PathVariable int pageNum) {
 
@@ -98,6 +86,18 @@ public class MemberController {
         List<ApplyDto> ApplyDtoList = memberApplyPages.stream().map(p-> new ApplyDto(p, memberRepository, noticeRepository, applyFileRepository)).collect((toList()));
 
         return new PageImpl<>(ApplyDtoList, page, memberApplyPages.getTotalElements());
+    }
+
+    @ResponseBody
+    @GetMapping("/apply/file/detail/{applyId}")
+    public FileApplyDto getApplyFile(HttpServletRequest request, @PathVariable Long applyId) {
+
+        //MemberDao currentMember = memberService.GetCurrentUserInfo(request).get();
+
+        Optional<ApplyFileNoticeEntity> applyFileNoticeEntity = applyFileRepository.findById(applyId);
+        FileApplyDto fileApplyDto = new FileApplyDto(applyFileNoticeEntity.get());
+
+        return fileApplyDto;
     }
 
 }
