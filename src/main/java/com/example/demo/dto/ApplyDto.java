@@ -24,6 +24,7 @@ public class ApplyDto {
     private String memberName;
     private String userId;
     private Timestamp uploadDay;
+    private Long applyId;
     private String dtype;
 
     public ApplyDto(MemberApply memberApply, MemberRepository memberRepository, NoticeRepository noticeRepository, ApplyFileRepository applyFileRepository){
@@ -42,6 +43,7 @@ public class ApplyDto {
             this.memberName = member.getName();
             this.userId = member.getUserId();
             this.uploadDay = applyFileNoticeEntity.getUploadDay();
+            this.applyId = memberApply.getApplyId();
             this.dtype = memberApply.getDtype();
         }
 
