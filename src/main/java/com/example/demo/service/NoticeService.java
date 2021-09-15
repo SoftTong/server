@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.dao.MemberDao;
 import com.example.demo.domain.entity.*;
 import com.example.demo.domain.repository.ApplyFileRepository;
+import com.example.demo.domain.repository.MemberApplyRepository;
 import com.example.demo.domain.repository.NoticeRepository;
 import com.example.demo.dto.FormNoticeDto;
 import com.example.demo.dto.FileNoticeDto;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class NoticeService {
     private NoticeRepository noticeRepository;
     private ApplyFileRepository applyFileRepository;
+    private  MemberApplyRepository memberApplyRepository;
 
     // 첨부 파일 형식 공지사항 작성
     @Transactional
@@ -51,7 +53,10 @@ public class NoticeService {
     public ApplyFileNoticeEntity makeApplyFileNotice(String filePath, MemberDao memberDao, NoticeEntity noticeEntity, String fileName){
         ApplyFileNoticeEntity applyFileNotice = new ApplyFileNoticeEntity(filePath, memberDao, noticeEntity, fileName);
         applyFileNotice.setStatus(StatusName.wait); //처음은 대기 상태로 저장
-        applyFileRepository.save(applyFileNotice);
+        ApplyFileNoticeEntity savedApplyFileNotice = applyFileRepository.save(applyFileNotice);
+
+        MemberApply memberApply = new MemberApply(memberDao.getId(), noticeEntity.getId(), savedApplyFileNotice.getId(),"file");
+        memberApplyRepository.save(memberApply);
         return applyFileNotice;
     }
 

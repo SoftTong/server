@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ApplyFileRepository extends JpaRepository<ApplyFileNoticeEntity, Long> {
 
@@ -20,4 +21,8 @@ public interface ApplyFileRepository extends JpaRepository<ApplyFileNoticeEntity
     Page<ApplyFileNoticeEntity> findMemberById(Long noticeId,Pageable pageable);
 
     Page<ApplyFileNoticeEntity> findAllByMemberDao(MemberDao memberDao, Pageable pageable);
+
+    List<ApplyFileNoticeEntity> findAllByMemberDao(MemberDao memberDao);
+
+    Optional<ApplyFileNoticeEntity> findById(Long id);
 }

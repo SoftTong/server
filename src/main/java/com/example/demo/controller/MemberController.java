@@ -11,9 +11,13 @@ import com.example.demo.config.security.JwtAuthenticationFilter;
 import com.example.demo.config.security.JwtTokenProvider;
 import com.example.demo.dao.MemberDao;
 import com.example.demo.domain.entity.ApplyFileNoticeEntity;
+import com.example.demo.domain.entity.MemberApply;
 import com.example.demo.domain.entity.NoticeEntity;
 import com.example.demo.domain.repository.ApplyFileRepository;
+import com.example.demo.domain.repository.MemberApplyRepository;
 import com.example.demo.domain.repository.MemberRepository;
+import com.example.demo.domain.repository.NoticeRepository;
+import com.example.demo.dto.ApplyDto;
 import com.example.demo.dto.FileApplyDto;
 import com.example.demo.dto.MemberDto;
 import com.example.demo.dto.NoticeInfoDto;
@@ -48,6 +52,10 @@ public class MemberController {
     private final MemberRepository memberRepository;
     @Autowired
     private  final ApplyFileRepository applyFileRepository;
+    @Autowired
+    private final MemberApplyRepository memberApplyRepository;
+    @Autowired
+    private final NoticeRepository noticeRepository;
 
     @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
@@ -78,6 +86,18 @@ public class MemberController {
         List<FileApplyDto> fileApplyDtoList = applyFileNoticeEntityPages.stream().map(p-> new FileApplyDto(p) ).collect((toList()));
 
         return new PageImpl<>(fileApplyDtoList, page, applyFileNoticeEntityPages.getTotalElements());
+    }
+
+    @ResponseBody
+    @GetMapping("/apply/{pageNum}")
+    public Page<ApplyDto> getApply(HttpServletRequest request, @PathVariable int pageNum) {
+
+        Pageable page = PageRequest.of(pageNum, 10, Sort.by("id").descending());
+        MemberDao currentMember = memberService.GetCurrentUserInfo(request).get();
+        Page<MemberApply> memberApplyPages = memberApplyRepository.findAllByMemberId(currentMember.getId(), page);
+        List<ApplyDto> ApplyDtoList = memberApplyPages.stream().map(p-> new ApplyDto(p, memberRepository, noticeRepository, applyFileRepository)).collect((toList()));
+
+        return new PageImpl<>(ApplyDtoList, page, memberApplyPages.getTotalElements());
     }
 
 }
