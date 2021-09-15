@@ -25,6 +25,7 @@ public class FileApplyDto {
     private String memberName;
     private String userId;
     private Timestamp uploadDay;
+    private String dtype;
 
 
     public FileApplyDto(ApplyFileNoticeEntity apply){
@@ -37,5 +38,6 @@ public class FileApplyDto {
         this.memberName =apply.getMemberDao().getName();
         this.userId = apply.getMemberDao().getUserId();
         this.uploadDay = apply.getUploadDay();
+        this.dtype = "file";
     }
 }
