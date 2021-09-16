@@ -35,7 +35,7 @@ public class ApplyDto {
         if(memberApply.getDtype().equals("file")){
 
             System.out.println("file type");
-            ApplyFileNoticeEntity applyFileNoticeEntity = applyFileRepository.findById(memberApply.getNoticeId()).get();
+            ApplyFileNoticeEntity applyFileNoticeEntity = applyFileRepository.findById(memberApply.getApplyId()).get();
 
             this.noticeTitle = noticeEntity.getName();
             this.status = applyFileNoticeEntity.getStatus();
