@@ -21,7 +21,9 @@ import com.example.demo.dto.ApplyDto;
 import com.example.demo.dto.FileApplyDto;
 import com.example.demo.dto.MemberDto;
 import com.example.demo.dto.NoticeInfoDto;
+import com.example.demo.payload.ApiResponse;
 import com.example.demo.service.MemberService;
+import com.example.demo.service.NoticeService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,9 +51,11 @@ public class MemberController {
     @Autowired
     private final MemberService memberService;
     @Autowired
+    private final NoticeService noticeService;
+    @Autowired
     private final MemberRepository memberRepository;
     @Autowired
-    private  final ApplyFileRepository applyFileRepository;
+    private final ApplyFileRepository applyFileRepository;
     @Autowired
     private final MemberApplyRepository memberApplyRepository;
     @Autowired
@@ -98,6 +102,24 @@ public class MemberController {
         FileApplyDto fileApplyDto = new FileApplyDto(applyFileNoticeEntity.get());
 
         return fileApplyDto;
+    }
+
+
+
+    @ResponseBody
+    @DeleteMapping("/apply/file/detail/{applyId}")
+    public ApiResponse deleteApplyFile(HttpServletRequest request, @PathVariable Long applyId) {
+
+        MemberDao currentMember = memberService.GetCurrentUserInfo(request).get();
+
+        if(noticeService.deleteApplyFiles(currentMember,applyId)){
+            return new ApiResponse(Boolean.TRUE,"정상적으로 삭제되었습니다.");
+        }else{
+            return new ApiResponse(Boolean.FALSE,"잘못된 접근입니다.");
+        }
+
+
+
     }
 
 }
