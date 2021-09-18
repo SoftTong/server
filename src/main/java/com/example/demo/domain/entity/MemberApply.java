@@ -26,6 +26,17 @@ public class MemberApply {
 
     }
 
+    @Override
+    public String toString() {
+        return "MemberApply{" +
+                "id=" + id +
+                ", memberId=" + memberId +
+                ", noticeId=" + noticeId +
+                ", applyId=" + applyId +
+                ", dtype='" + dtype + '\'' +
+                '}';
+    }
+
     public MemberApply(Long memberId, Long noticeId, Long applyId, String dtype) {
         this.memberId = memberId;
         this.noticeId = noticeId;

@@ -1,15 +1,14 @@
 package com.example.demo.controller;
 
 import com.example.demo.dao.MemberDao;
-import com.example.demo.domain.entity.ApplyFileNoticeEntity;
-import com.example.demo.domain.entity.FileNotice;
-import com.example.demo.domain.entity.FormNotice;
-import com.example.demo.domain.entity.NoticeEntity;
+import com.example.demo.domain.entity.*;
+import com.example.demo.domain.repository.MemberApplyRepository;
 import com.example.demo.domain.repository.MemberRepository;
 import com.example.demo.domain.repository.NoticeRepository;
 import com.example.demo.dto.FormNoticeDto;
 import com.example.demo.dto.FileNoticeDto;
 import com.example.demo.dto.NoticeInfoDto;
+import com.example.demo.payload.ApiResponse;
 import com.example.demo.service.MemberService;
 import com.example.demo.service.NoticeService;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +33,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.text.html.Option;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -58,6 +58,8 @@ public class NoticeController {
 
     private final MemberRepository memberRepository;
     private final MemberService memberService;
+
+    private final MemberApplyRepository memberApplyRepository;
 
     @ResponseBody
     @GetMapping("/{pageNum}")
@@ -181,13 +183,17 @@ public class NoticeController {
     @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
     @PostMapping(value="/file/apply", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Boolean applyFileBoard(HttpServletRequest request, @RequestPart(name="file", required = false) MultipartFile multipartFile, @RequestParam("noticeId") Long noticeId) {
+    public ApiResponse applyFileBoard(HttpServletRequest request, @RequestPart(name="file", required = false) MultipartFile multipartFile, @RequestParam("noticeId") Long noticeId) {
 
-        System.out.println(multipartFile.getOriginalFilename());
-        System.out.println(noticeId);
-
+//        System.out.println(multipartFile.getOriginalFilename());
+//        System.out.println(noticeId);
         MemberDao currentMember = memberService.GetCurrentUserInfo(request).get();
         NoticeEntity noticeEntity = noticeRepository.findById(noticeId).get();
+
+        Optional<MemberApply> apply = memberApplyRepository.findByNoticeWithMember(noticeId,currentMember.getId());
+        if (apply.isPresent()){
+            return new ApiResponse(false,"이미 신청한 게시물입니다.");
+        }
 
         //File클래스를 통해 파일과 디렉터리를 다룬다 -> File인스턴스는 파일일 수 도 있고 디렉터리 일 수 도 있다다
         //MultipartFile을 받아와서 그 FileInputStream을 얻고 빈 targetFile에 스트림을 복사
@@ -198,13 +204,13 @@ public class NoticeController {
             InputStream fileStream = multipartFile.getInputStream();
             FileUtils.copyInputStreamToFile(fileStream, targetFile);
             noticeService.makeApplyFileNotice(uid.toString() + "." + extension, currentMember, noticeEntity, multipartFile.getOriginalFilename());
-            return true;
+            return new ApiResponse(true,"제출 완료했습니다.");
         } catch (IOException e) {
             FileUtils.deleteQuietly(targetFile); //지움
             e.printStackTrace();
         }
 
-        return false;
+        return new ApiResponse(false,"서버 오류");
     }
 
     @GetMapping("/download/file/{fileName:.+}")

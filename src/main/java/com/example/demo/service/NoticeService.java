@@ -11,8 +11,13 @@ import com.example.demo.dto.FileNoticeDto;
 import javax.transaction.Transactional;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
+@Slf4j
 @Service
 @AllArgsConstructor
 public class NoticeService {
@@ -58,6 +63,23 @@ public class NoticeService {
         MemberApply memberApply = new MemberApply(memberDao.getId(), noticeEntity.getId(), savedApplyFileNotice.getId(),"file");
         memberApplyRepository.save(memberApply);
         return applyFileNotice;
+    }
+
+    public boolean deleteApplyFiles(MemberDao member,Long applyId){
+//         memberApplyRepository.findAllByMemberId(member.getId());
+        Optional<MemberApply> apply = memberApplyRepository.findByApplyId(applyId);
+
+        if (apply.isPresent()) {
+            if (member.getId().equals(apply.get().getMemberId())) {
+                applyFileRepository.deleteById(applyId);
+                memberApplyRepository.deleteById(apply.get().getId());
+                return true;
+            } else {
+                log.info("wrong");
+                return false;
+            }
+        }
+        return false;
     }
 
 }
