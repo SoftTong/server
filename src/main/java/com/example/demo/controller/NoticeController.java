@@ -207,7 +207,7 @@ public class NoticeController {
         return false;
     }
 
-    @RequestMapping("/download/file/{fileName:.+}")
+    @GetMapping("/download/file/{fileName:.+}")
     public ResponseEntity<InputStreamResource> downloadFile(@PathVariable String fileName) throws IOException {
 
         System.out.println(fileName);
