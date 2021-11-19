@@ -46,6 +46,7 @@ import static java.util.stream.Collectors.toList;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/member")
 public class MemberController {
 
     @Autowired
@@ -63,8 +64,15 @@ public class MemberController {
 
     @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
-    @PatchMapping(value= "/user")// 회원정보 수정 Patch
-    public MemberDto modifyUserInfo(@RequestBody MemberDto userInfo, HttpServletRequest request){
+    @GetMapping(value= "/status")//현재 사용자 정보 받아오기
+    public Optional<MemberDao> memberStatus(HttpServletRequest request){
+        return memberService.GetCurrentUserInfo(request);
+    }
+
+    @Secured({"ROLE_USER","ROLE_ADMIN"})
+    @ResponseBody
+    @PatchMapping(value= "/info")// 회원정보 수정 Patch
+    public MemberDto memberModify(@RequestBody MemberDto userInfo, HttpServletRequest request){
 
         String currentUserId = memberService.GetCurrentUserInfo(request).get().getUserId();
         memberService.PatchUser(currentUserId,userInfo);
@@ -72,17 +80,9 @@ public class MemberController {
         return userInfo;
     }
 
-    @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
-    @GetMapping(value= "/user/current")//현재 사용자 정보 받아오기
-    public Optional<MemberDao> currentUserInfo(HttpServletRequest request){
-
-        return memberService.GetCurrentUserInfo(request);
-    }
-
-    @ResponseBody
-    @GetMapping("/apply/{pageNum}")
-    public Page<ApplyDto> getApply(HttpServletRequest request, @PathVariable int pageNum) {
+    @GetMapping("/applications/{pageNum}")
+    public Page<ApplyDto> applicationList(HttpServletRequest request, @PathVariable int pageNum) {
 
         Pageable page = PageRequest.of(pageNum, 10, Sort.by("id").descending());
         MemberDao currentMember = memberService.GetCurrentUserInfo(request).get();
@@ -93,8 +93,8 @@ public class MemberController {
     }
 
     @ResponseBody
-    @GetMapping("/apply/file/detail/{applyId}")
-    public FileApplyDto getApplyFile(HttpServletRequest request, @PathVariable Long applyId) {
+    @GetMapping("/applications/file/{applyId}")
+    public FileApplyDto applicationFileDetails(HttpServletRequest request, @PathVariable Long applyId) {
 
         //MemberDao currentMember = memberService.GetCurrentUserInfo(request).get();
 
@@ -107,8 +107,8 @@ public class MemberController {
 
 
     @ResponseBody
-    @DeleteMapping("/apply/file/detail/{applyId}")
-    public ApiResponse deleteApplyFile(HttpServletRequest request, @PathVariable Long applyId) {
+    @DeleteMapping("/applications/file/{applyId}")
+    public ApiResponse applicationFileRemove(HttpServletRequest request, @PathVariable Long applyId) {
 
         MemberDao currentMember = memberService.GetCurrentUserInfo(request).get();
 
@@ -117,8 +117,6 @@ public class MemberController {
         }else{
             return new ApiResponse(Boolean.FALSE,"잘못된 접근입니다.");
         }
-
-
 
     }
 
