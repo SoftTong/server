@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.example.demo.controller.notice;
 
 import com.example.demo.dao.MemberDao;
 import com.example.demo.domain.entity.*;
@@ -63,7 +63,7 @@ public class NoticeController {
 
     @ResponseBody
     @GetMapping("/{pageNum}")
-    public Page<NoticeInfoDto> notice(@PathVariable int pageNum,
+    public Page<NoticeInfoDto> noticeList(@PathVariable int pageNum,
                                       @RequestParam(required = false) String searchWord,
                                       @RequestParam(required = true) String category) {
         if (category.equals("title")) { // 기본 상태 ( 기본이 제목으로 검색 )
@@ -130,7 +130,7 @@ public class NoticeController {
 
     @ResponseBody
     @GetMapping("/detail/{noticeNum}")
-    public Object detail(@PathVariable Long noticeNum) {
+    public NoticeType<? extends NoticeInfoDto> noticeDetails(@PathVariable Long noticeNum) {
         String dtype = (String) noticeRepository.findDtypeById(noticeNum);
         log.debug("dtype = {}", dtype);
 
@@ -138,17 +138,20 @@ public class NoticeController {
 
             FileNotice fileNotice = noticeService.getFileNotice(noticeNum);
             FileNoticeDto fileNoticeDto = new FileNoticeDto(fileNotice, Boolean.FALSE); // File 타입이므로 False를 같이 넘김
+            NoticeType<FileNoticeDto> noticeType = new NoticeType<>();
+            noticeType.setNotice(fileNoticeDto);
             log.debug("fileNotice입니다.");
-
-            return fileNoticeDto;
+            return noticeType;
 
         } else if (dtype.equals("form")) { // FormNotice 타입일 때
 
             FormNotice formNotice = noticeService.getFormNotice(noticeNum);
             FormNoticeDto formNoticeDto = new FormNoticeDto(formNotice, Boolean.TRUE); // Form 타입이므로 True를 같이 넘김
+            NoticeType<FormNoticeDto> noticeType = new NoticeType<>();
+            noticeType.setNotice(formNoticeDto);
             log.debug("formNotice입니다.");
+            return noticeType;
 
-            return formNoticeDto;
         } else {
             log.debug("올바르지 않은 공지사항입니다.");
             throw new IllegalStateException("해당 게시글이 존재하지 않습니다.");
@@ -159,10 +162,9 @@ public class NoticeController {
     @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
     @PostMapping("/file/board")
-    public FileNoticeDto postFileBoard(HttpServletRequest request, @RequestBody FileNoticeDto postInfo) {
+    public FileNoticeDto fileNoticeAdd(HttpServletRequest request, @RequestBody FileNoticeDto postInfo) {
 
         MemberDao user = memberService.GetCurrentUserInfo(request).get();
-
         noticeService.makeFileNotice(user,postInfo);
         return postInfo;
     }
@@ -171,10 +173,9 @@ public class NoticeController {
     @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
     @PostMapping("/form/board")
-    public FormNoticeDto postFormBoard(HttpServletRequest request, @RequestBody FormNoticeDto postInfo) {
+    public FormNoticeDto formNoticeAdd(HttpServletRequest request, @RequestBody FormNoticeDto postInfo) {
 
         MemberDao user = memberService.GetCurrentUserInfo(request).get();
-
         noticeService.makeFormNotice(user,postInfo);
         return postInfo;
     }
@@ -183,10 +184,8 @@ public class NoticeController {
     @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
     @PostMapping(value="/file/apply", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponse applyFileBoard(HttpServletRequest request, @RequestPart(name="file", required = false) MultipartFile multipartFile, @RequestParam("noticeId") Long noticeId) {
+    public ApiResponse applyFileAdd(HttpServletRequest request, @RequestPart(name="file", required = false) MultipartFile multipartFile, @RequestParam("noticeId") Long noticeId) {
 
-//        System.out.println(multipartFile.getOriginalFilename());
-//        System.out.println(noticeId);
         MemberDao currentMember = memberService.GetCurrentUserInfo(request).get();
         NoticeEntity noticeEntity = noticeRepository.findById(noticeId).get();
 

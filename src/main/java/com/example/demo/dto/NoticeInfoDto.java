@@ -29,7 +29,7 @@ public class NoticeInfoDto {
 
     }
 
-    @Builder
+
     public NoticeInfoDto(NoticeEntity noticeEntity) {
         this.id = noticeEntity.getId();
         this.name = noticeEntity.getName();

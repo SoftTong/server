@@ -9,7 +9,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 @Getter @Setter
-public class FormNoticeDto {
+public class FormNoticeDto extends NoticeInfoDto {
     // 폼 형식 공지사항 Dto
     private Long id;
     private String name;

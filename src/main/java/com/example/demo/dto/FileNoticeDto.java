@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 
 
 @Getter @Setter
-public class FileNoticeDto {
+public class FileNoticeDto extends NoticeInfoDto{
     // 첨부파일 형식 공지사항 Dto
     private Long id;
     private String name;
