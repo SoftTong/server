@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,6 +31,10 @@ public class MemberStatusService {
     String token = jwtAuthenticationFilter.getJwtFromRequest(request);
     Long currentUserId = jwtTokenProvider.getUserIdFromJWT(token);
     return memberRepository.findById(currentUserId);
+  }
+
+  public List<MemberDao> findBySearchWordContaining(String searchWord) {
+    return memberRepository.findByNameContaining(searchWord);
   }
 
 
