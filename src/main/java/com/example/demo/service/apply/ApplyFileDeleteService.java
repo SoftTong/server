@@ -4,10 +4,16 @@ import com.example.demo.dao.MemberDao;
 import com.example.demo.domain.entity.MemberApply;
 import com.example.demo.domain.repository.ApplyFileRepository;
 import com.example.demo.domain.repository.MemberApplyRepository;
+import com.example.demo.payload.ApiResponse;
+import com.example.demo.service.member.MemberStatusService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -17,21 +23,25 @@ public class ApplyFileDeleteService {
 
   private final MemberApplyRepository memberApplyRepository;
   private final ApplyFileRepository applyFileRepository;
+  private final MemberStatusService memberStatusService;
 
-  public boolean deleteApplyFiles(MemberDao member, Long applyId){
-//  memberApplyRepository.findAllByMemberId(member.getId());
+  //사용자가 지원한 지원 파일 삭제
+  public ApiResponse removeApplyFile(HttpServletRequest request, @PathVariable Long applyId) {
+
+    MemberDao currentMember = memberStatusService.findMember(request).get();
+
     Optional<MemberApply> apply = memberApplyRepository.findByApplyId(applyId);
 
     if (apply.isPresent()) {
-      if (member.getId().equals(apply.get().getMemberId())) {
+      if (currentMember.getId().equals(apply.get().getMemberId())) {
         applyFileRepository.deleteById(applyId);
         memberApplyRepository.deleteById(apply.get().getId());
-        return true;
+        return new ApiResponse(Boolean.TRUE,"정상적으로 삭제되었습니다.");
       } else {
         log.info("wrong");
-        return false;
+        return new ApiResponse(Boolean.FALSE,"잘못된 접근입니다.");
       }
     }
-    return false;
+    return new ApiResponse(Boolean.FALSE,"잘못된 접근입니다.");
   }
 }

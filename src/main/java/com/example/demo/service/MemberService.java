@@ -34,13 +34,9 @@ import java.util.Optional;
 @AllArgsConstructor
 public class MemberService {
 
-    @Autowired
     private MemberRepository memberRepository;
-    @Autowired
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    @Autowired
     private final JwtTokenProvider jwtTokenProvider;
-    @Autowired
     PasswordEncoder passwordEncoder;
 
     // 회원정보 수정  Sangrok
