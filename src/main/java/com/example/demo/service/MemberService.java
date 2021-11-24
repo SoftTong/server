@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
+//이제 안씀
 @Service
 @AllArgsConstructor
 public class MemberService {

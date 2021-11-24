@@ -20,22 +20,24 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @Controller
 @AllArgsConstructor
-@RequestMapping("/member")
+@RequestMapping("/members")
 public class MemberController {
 
     private final MemberModifyService memberModifyService;
     private final MemberStatusService memberStatusService;
 
+    //현재 사용자 정보 받아오기
     @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
-    @GetMapping(value= "/status")//현재 사용자 정보 받아오기
+    @GetMapping(value= "/status")
     public Optional<MemberDao> memberStatus(HttpServletRequest request){
         return memberStatusService.findMember(request);
     }
 
+    //회원정보 수정
     @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
-    @PatchMapping(value= "/info")// 회원정보 수정 Patch
+    @PatchMapping(value= "/info")
     public MemberDto memberModify(@RequestBody MemberDto userInfo, HttpServletRequest request){
 
         String currentUserId = memberStatusService.findMember(request).get().getUserId();

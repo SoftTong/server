@@ -11,6 +11,7 @@ import com.example.demo.dto.NoticeInfoDto;
 import com.example.demo.payload.ApiResponse;
 import com.example.demo.service.MemberService;
 import com.example.demo.service.NoticeService;
+import com.example.demo.service.apply.ApplyFileResgisterService;
 import com.example.demo.service.member.MemberStatusService;
 import com.example.demo.service.notice.NoticeRegisterService;
 import com.example.demo.service.notice.NoticeStatusService;
@@ -37,6 +38,7 @@ import org.springframework.web.multipart.support.StandardServletMultipartResolve
 
 import javax.servlet.http.HttpServletRequest;
 import javax.swing.text.html.Option;
+import java.awt.print.Pageable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -58,10 +60,9 @@ public class NoticeController {
 
     private final NoticeStatusService noticeStatusService;
     private final NoticeRegisterService noticeRegisterService;
-
     private final MemberStatusService memberStatusService;
-
     private final MemberApplyRepository memberApplyRepository;
+    private final ApplyFileResgisterService applyFileResgisterService;
 
     @ResponseBody
     @GetMapping("/{pageNum}")
@@ -110,7 +111,7 @@ public class NoticeController {
     @ResponseBody
     @PostMapping("/file/board")
     public FileNoticeDto fileNoticeAdd(HttpServletRequest request, @RequestBody FileNoticeDto postInfo) {
-        MemberDao user = memberStatusService.GetCurrentUserInfo(request).get();
+        MemberDao user = memberStatusService.findMember(request).get();
         noticeRegisterService.makeFileNotice(user,postInfo);
         return postInfo;
     }
@@ -120,61 +121,15 @@ public class NoticeController {
     @ResponseBody
     @PostMapping("/form/board")
     public FormNoticeDto formNoticeAdd(HttpServletRequest request, @RequestBody FormNoticeDto postInfo) {
-        MemberDao user = memberStatusService.GetCurrentUserInfo(request).get();
+        MemberDao user = memberStatusService.findMember(request).get();
         noticeRegisterService.makeFormNotice(user,postInfo);
         return postInfo;
     }
 
-    //사용자가 파일을 제출할때
-    @Secured({"ROLE_USER","ROLE_ADMIN"})
-    @ResponseBody
-    @PostMapping(value="/file/apply", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponse applyFileAdd(HttpServletRequest request, @RequestPart(name="file", required = false) MultipartFile multipartFile, @RequestParam("noticeId") Long noticeId) {
+    //관리자가 작성한 게시물 목록 가져오기
+    @GetMapping("/managers/{pageNum}")
+    public Page<NoticeInfoDto> noticeManagerList(HttpServletRequest req, @PathVariable int pageNum) {
 
-        MemberDao currentMember = memberStatusService.GetCurrentUserInfo(request).get();
-        NoticeEntity noticeEntity = noticeStatusService.findById(noticeId);
-
-        Optional<MemberApply> apply = memberApplyRepository.findByNoticeWithMember(noticeId,currentMember.getId());
-        log.info("apply = {}", apply);
-        log.info("apply.name = {}", apply.get().getNoticeId());
-        if (apply.isPresent()){
-            return new ApiResponse(false,"이미 신청한 게시물입니다.");
-        }
-
-        //File클래스를 통해 파일과 디렉터리를 다룬다 -> File인스턴스는 파일일 수 도 있고 디렉터리 일 수 도 있다다
-        //MultipartFile을 받아와서 그 FileInputStream을 얻고 빈 targetFile에 스트림을 복사
-        UUID uid = UUID.randomUUID();
-        String extension = FilenameUtils.getExtension(multipartFile.getOriginalFilename());
-        File targetFile = new File("src/main/resources/menufiles/" + uid.toString() + "." + extension);
-        try {
-            InputStream fileStream = multipartFile.getInputStream();
-            FileUtils.copyInputStreamToFile(fileStream, targetFile);
-            noticeStatusService.makeApplyFileNotice(uid.toString() + "." + extension, currentMember, noticeEntity, multipartFile.getOriginalFilename());
-            return new ApiResponse(true,"제출 완료했습니다.");
-        } catch (IOException e) {
-            FileUtils.deleteQuietly(targetFile); //지움
-            e.printStackTrace();
-        }
-
-        return new ApiResponse(false,"서버 오류");
-    }
-
-    @GetMapping("/download/file/{fileName:.+}")
-    public ResponseEntity<InputStreamResource> downloadFile(@PathVariable String fileName) throws IOException {
-
-        System.out.println(fileName);
-
-        String path = "src/main/resources/menufiles/"+fileName;
-        File file = new File(path);
-        HttpHeaders header = new HttpHeaders();
-
-        header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+fileName);
-        header.add("Cache-Control", "no-cache, no-store, must-revalidate");
-        header.add("Pragma", "no-cache");
-        header.add("Expires", "0");
-
-        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
-
-        return ResponseEntity.ok() .headers(header) .contentLength(file.length()) .contentType(MediaType.parseMediaType("application/octet-stream")) .body(resource);
+        return noticeStatusService.findAllByManager(req, pageNum);
     }
 }

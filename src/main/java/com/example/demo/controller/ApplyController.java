@@ -1,4 +1,4 @@
-package main.java.com.example.demo.controller;
+package com.example.demo.controller;
 
 import com.example.demo.dao.MemberDao;
 import com.example.demo.domain.entity.ApplyFileNoticeEntity;
@@ -10,19 +10,33 @@ import com.example.demo.dto.NoticeInfoDto;
 import com.example.demo.payload.ApiResponse;
 import com.example.demo.service.MemberService;
 import com.example.demo.service.apply.ApplyFileDeleteService;
+import com.example.demo.service.apply.ApplyFileResgisterService;
 import com.example.demo.service.apply.ApplyFileStatusService;
 import com.example.demo.service.member.MemberStatusService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.awt.print.Pageable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
 
@@ -32,9 +46,9 @@ import static java.util.stream.Collectors.toList;
 @RequestMapping("/apply")
 public class ApplyController {
 
-    private final MemberStatusService memberStatusService;
     private final ApplyFileStatusService applyFileStatusService;
     private final ApplyFileDeleteService applyFileDeleteService;
+    private final ApplyFileResgisterService applyFileResgisterService;
 
     //사용자가 지원한 지원서들 가져오기
     @ResponseBody
@@ -47,58 +61,33 @@ public class ApplyController {
     @ResponseBody
     @GetMapping("/file/{applyId}")
     public FileApplyDto applyFileDetails(HttpServletRequest request, @PathVariable Long applyId) {
-        return applyFileStatusService.findapplyFile(request, applyId);
+        return applyFileStatusService.findApplyFileByApplyId(request, applyId);
     }
 
     //사용자가 지원한 지원 파일 삭제
     @ResponseBody
     @DeleteMapping("/file/{applyId}")
-    public ApiResponse applicationFileRemove(HttpServletRequest request, @PathVariable Long applyId) {
+    public ApiResponse applyFileRemove(HttpServletRequest request, @PathVariable Long applyId) {
         return applyFileDeleteService.removeApplyFile(request, applyId);
-    }
-
-    //관리자가 작성한 게시물 목록 가져오기
-    @GetMapping("/{pageNum}")
-    public Page<NoticeInfoDto> getManagerPage(HttpServletRequest req, @PathVariable int pageNum) {
-
-        Pageable page = PageRequest.of(pageNum, 10, Sort.by("uploadDay").descending());
-        MemberDao currentUser = memberStatusService.GetCurrentUserInfo(req).get();
-
-        Page<NoticeEntity> noticeEntityPages = noticeStatusService.findAllByMemberDao(currentUser,page);
-
-        List<NoticeInfoDto> noticeInfoDtoList = noticeEntityPages.stream().map(nep -> new NoticeInfoDto(nep)).collect((toList()));
-
-        return new PageImpl<>(noticeInfoDtoList, page, noticeEntityPages.getTotalElements());
     }
 
     //관리자가 작성한 게시물의 지원한 지원서 정보들
     @GetMapping("/{noticeId}/{pageNum}")
-    public PageImpl<Object> getNotice(@PathVariable Long noticeId, @PathVariable int pageNum) {
-        Pageable page = PageRequest.of(pageNum, 10, Sort.by("member_id").ascending());
-
-        String dtype = (String) noticeStatusService.findDtypeById(noticeId);
-
-        if (dtype.equals("file")) {
-            Page<ApplyFileNoticeEntity> applyPages = applyFileStatusService.findMemberById(noticeId,page);
-            List<FileApplyDto> fileApplyDtoList = applyPages.stream().map(a-> new FileApplyDto(a) ).collect((toList()));
-            return new PageImpl(fileApplyDtoList, page, applyPages.getTotalElements());
-        } else if (dtype.equals("form")) {
-            throw new IllegalStateException("폼 형식은 아직 구현되지 않았습니다.");
-        } else {
-            throw new IllegalStateException("올바르지 않은 공지사항입니다.");
-        }
-
+    public PageImpl<Object> applyManagerList(@PathVariable Long noticeId, @PathVariable int pageNum) {
+        return applyFileStatusService.findApplyFileByNoticeId(noticeId, pageNum);
     }
 
-    //이거 일단 보류
-    @GetMapping()//현재 사용자 정보 받아오기
-    public List<NoticeEntity> getManager(HttpServletRequest request){
+    //사용자가 파일을 제출할때
+    @Secured({"ROLE_USER","ROLE_ADMIN"})
+    @ResponseBody
+    @PostMapping(value="/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse applyFileAdd(HttpServletRequest request, @RequestPart(name="file", required = false) MultipartFile multipartFile, @RequestParam("noticeId") Long noticeId) {
+        return applyFileResgisterService.addApplyFile(request, multipartFile, noticeId);
+    }
 
-        log.info("GetManager");
-        MemberDao currentUser = memberStatusService.GetCurrentUserInfo(request).get();
-
-        List<NoticeEntity> noticeEntitys = noticeStatusService.findByMember(currentUser);
-
-        return noticeEntitys;
+    //파일 다운로드
+    @GetMapping("/download/file/{fileName:.+}")
+    public ResponseEntity<InputStreamResource> applyFileDownload(@PathVariable String fileName) throws IOException {
+        return applyFileStatusService.downloadApplyFile(fileName);
     }
 }

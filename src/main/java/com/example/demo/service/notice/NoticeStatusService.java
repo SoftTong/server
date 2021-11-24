@@ -9,11 +9,15 @@ import com.example.demo.domain.repository.NoticeRepository;
 import com.example.demo.dto.FileNoticeDto;
 import com.example.demo.dto.FormNoticeDto;
 import com.example.demo.dto.NoticeInfoDto;
+import com.example.demo.service.member.MemberStatusService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +34,7 @@ public class NoticeStatusService {
   private final NoticeRepository noticeRepository;
   private final ApplyFileRepository applyFileRepository;
   private final MemberApplyRepository memberApplyRepository;
+  private final MemberStatusService memberStatusService;
 
   public NoticeEntity findById(Long noticeId) {
     Optional<NoticeEntity> findNotice = noticeRepository.findById(noticeId);
@@ -105,16 +110,16 @@ public class NoticeStatusService {
     return noticeType;
   }
 
-  public ApplyFileNoticeEntity makeApplyFileNotice(String filePath, MemberDao memberDao, NoticeEntity noticeEntity, String fileName){
-    ApplyFileNoticeEntity applyFileNotice = new ApplyFileNoticeEntity(filePath, memberDao, noticeEntity, fileName);
-    applyFileNotice.setStatus(StatusName.wait); //처음은 대기 상태로 저장
-    ApplyFileNoticeEntity savedApplyFileNotice = applyFileRepository.save(applyFileNotice);
+  //관리자가 작성한 게시물 목록 가져오기
+  public Page<NoticeInfoDto> findAllByManager(HttpServletRequest req, @PathVariable int pageNum) {
 
-    MemberApply memberApply = new MemberApply(memberDao.getId(), noticeEntity.getId(), savedApplyFileNotice.getId(),"file");
-    memberApplyRepository.save(memberApply);
-    return applyFileNotice;
+    Pageable pageable = PageRequest.of(pageNum, 10, Sort.by("uploadDay").descending());
+    MemberDao currentUser = memberStatusService.findMember(req).get();
+    Page<NoticeEntity> noticeEntityPages = findAllByMemberDao(currentUser,pageable);
+    List<NoticeInfoDto> noticeInfoDtoList = noticeEntityPages.stream().map(nep -> new NoticeInfoDto(nep)).collect((toList()));
+
+    return new PageImpl<>(noticeInfoDtoList, pageable, noticeEntityPages.getTotalElements());
   }
-
 
 
 
