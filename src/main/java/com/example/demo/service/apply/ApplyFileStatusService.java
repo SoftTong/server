@@ -44,7 +44,6 @@ public class ApplyFileStatusService {
   private final NoticeRepository noticeRepository;
   private final MemberStatusService memberStatusService;
   private final NoticeStatusService noticeStatusService;
-  private final ApplyFileStatusService applyFileStatusService;
 
   public Page<ApplyFileNoticeEntity> findMemberById(Long noticeId, Pageable page){
     return applyFileRepository.findMemberById(noticeId, page);
@@ -74,7 +73,7 @@ public class ApplyFileStatusService {
     String dtype = (String) noticeStatusService.findDtypeById(noticeId);
 
     if (dtype.equals("file")) {
-      Page<ApplyFileNoticeEntity> applyPages = applyFileStatusService.findMemberById(noticeId,page);
+      Page<ApplyFileNoticeEntity> applyPages = findMemberById(noticeId,page);
       List<FileApplyDto> fileApplyDtoList = applyPages.stream().map(a-> new FileApplyDto(a) ).collect((toList()));
       return new PageImpl(fileApplyDtoList, page, applyPages.getTotalElements());
     } else if (dtype.equals("form")) {

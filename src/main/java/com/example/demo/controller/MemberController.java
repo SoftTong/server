@@ -4,12 +4,14 @@ import java.util.Optional;
 
 import com.example.demo.dao.MemberDao;
 import com.example.demo.dto.MemberDto;
+import com.example.demo.dto.MemberStatusDto;
 import com.example.demo.service.MemberService;
 import com.example.demo.service.member.MemberModifyService;
 import com.example.demo.service.member.MemberStatusService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -30,20 +32,20 @@ public class MemberController {
     @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
     @GetMapping(value= "/status")
-    public Optional<MemberDao> memberStatus(HttpServletRequest request){
-        return memberStatusService.findMember(request);
+    public ApiResult<?> memberStatus(HttpServletRequest request){
+        return ApiResult.OK(new MemberStatusDto(memberStatusService.findMember(request).get()));
     }
 
     //회원정보 수정
     @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
     @PatchMapping(value= "/info")
-    public MemberDto memberModify(@RequestBody MemberDto userInfo, HttpServletRequest request){
+    public ApiResult<?> memberModify(@RequestBody MemberDto userInfo, HttpServletRequest request){
 
         String currentUserId = memberStatusService.findMember(request).get().getUserId();
         memberModifyService.modifyMember(currentUserId,userInfo);
 
-        return userInfo;
+        return ApiResult.OK(userInfo);
     }
 
 }
