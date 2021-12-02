@@ -37,6 +37,7 @@ logging:
     org:
       hibernate:
         SQL: DEBUG
+      springframework: debug
 
 app:
   jwtExpirationInMs: 604800000
