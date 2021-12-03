@@ -99,6 +99,7 @@ public class ApplyFileStatusService {
     InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
 
     return ResponseEntity.ok() .headers(header) .contentLength(file.length()) .contentType(MediaType.parseMediaType("application/octet-stream")) .body(resource);
+
   }
 
 }
