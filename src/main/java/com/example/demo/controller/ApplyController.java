@@ -87,8 +87,8 @@ public class ApplyController {
     @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
     @PostMapping(value="/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResult applyFileAdd(HttpServletRequest request, @RequestPart(name="file", required = false) MultipartFile multipartFile, @RequestParam("noticeId") Long noticeId) {
-        return ApiResult.OK(applyFileResgisterService.addApplyFile(request, multipartFile, noticeId));
+    public ApiResult<?> applyFileAdd(HttpServletRequest request, @RequestPart(name="file", required = false) MultipartFile multipartFile, @RequestParam("noticeId") Long noticeId) {
+        return applyFileResgisterService.addApplyFile(request, multipartFile, noticeId);
     }
 
     //파일 다운로드
