@@ -11,12 +11,12 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-#    url: jdbc:mysql://localhost:3306/sotong?serverTimezone=UTC&characterEncoding=UTF-8
+#    url: jdbc:mysql://localhost:3306/bank?serverTimezone=Asia/Seoul
 #    username: root
-#    password: root1234
+#    password: swroot1116
 
 #     docker
-    url: jdbc:mysql://mysql:3306/sotong?serverTimezone=UTC&characterEncoding=UTF-8
+   url: jdbc:mysql://mysql:3306/sotong?serverTimezone=UTC&characterEncoding=UTF-8
     username: sotong
     password: sotong
 
@@ -37,6 +37,7 @@ logging:
     org:
       hibernate:
         SQL: DEBUG
+      #springframework: debug
 
 app:
   jwtExpirationInMs: 604800000

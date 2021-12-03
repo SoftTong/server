@@ -78,6 +78,7 @@ public class ApplyController {
     }
 
     //관리자가 작성한 게시물의 지원한 지원서 정보들
+    @ResponseBody
     @GetMapping("/{noticeId}/{pageNum}")
     public ApiResult<PageImpl<Object>> applyManagerList(@PathVariable Long noticeId, @PathVariable int pageNum) {
         return ApiResult.OK(applyFileStatusService.findApplyFileByNoticeId(noticeId, pageNum));
@@ -87,8 +88,8 @@ public class ApplyController {
     @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
     @PostMapping(value="/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResult applyFileAdd(HttpServletRequest request, @RequestPart(name="file", required = false) MultipartFile multipartFile, @RequestParam("noticeId") Long noticeId) {
-        return ApiResult.OK(applyFileResgisterService.addApplyFile(request, multipartFile, noticeId));
+    public ApiResult<?> applyFileAdd(HttpServletRequest request, @RequestPart(name="file", required = false) MultipartFile multipartFile, @RequestParam("noticeId") Long noticeId) {
+        return applyFileResgisterService.addApplyFile(request, multipartFile, noticeId);
     }
 
     //파일 다운로드

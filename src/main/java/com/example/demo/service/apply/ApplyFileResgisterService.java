@@ -1,5 +1,6 @@
 package com.example.demo.service.apply;
 
+import com.example.demo.controller.ApiResult;
 import com.example.demo.dao.MemberDao;
 import com.example.demo.domain.entity.ApplyFileNoticeEntity;
 import com.example.demo.domain.entity.MemberApply;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
@@ -54,16 +56,16 @@ public class ApplyFileResgisterService {
     //사용자가 파일을 제출할때
     @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
-    public ApiResponse addApplyFile(HttpServletRequest request, MultipartFile multipartFile, Long noticeId) {
+    public ApiResult<?> addApplyFile(HttpServletRequest request, MultipartFile multipartFile, Long noticeId) {
 
         MemberDao currentMember = memberStatusService.findMember(request).get();
         NoticeEntity noticeEntity = noticeStatusService.findById(noticeId);
 
         Optional<MemberApply> apply = memberApplyRepository.findByNoticeWithMember(noticeId,currentMember.getId());
         log.info("apply = {}", apply);
-//        log.info("apply.name = {}", apply.get().getNoticeId());
+        //log.info("apply.name = {}", apply.get().getNoticeId());
         if (apply.isPresent()){
-            return new ApiResponse(false,"이미 신청한 게시물입니다.");
+            return ApiResult.ERROR(new IllegalStateException("이미 신청한 게시물입니다."), HttpStatus.BAD_REQUEST);
         }
 
         //File클래스를 통해 파일과 디렉터리를 다룬다 -> File인스턴스는 파일일 수 도 있고 디렉터리 일 수 도 있다다
@@ -75,12 +77,13 @@ public class ApplyFileResgisterService {
             InputStream fileStream = multipartFile.getInputStream();
             FileUtils.copyInputStreamToFile(fileStream, targetFile);
             addApplyFileNotice(uid.toString() + "." + extension, currentMember, noticeEntity, multipartFile.getOriginalFilename());
-            return new ApiResponse(true,"제출 완료했습니다.");
+
+            return ApiResult.OK(uid.toString());
         } catch (IOException e) {
             FileUtils.deleteQuietly(targetFile); //지움
             e.printStackTrace();
         }
 
-        return new ApiResponse(false,"서버 오류");
+        return ApiResult.ERROR(new IllegalStateException("서버 오류입니다."), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
