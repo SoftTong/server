@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -53,36 +54,41 @@ public class ApplyController {
     //사용자가 지원한 지원서들 가져오기
     @ResponseBody
     @GetMapping("/{pageNum}")
-    public Page<ApplyDto> applyList(HttpServletRequest request, @PathVariable int pageNum) {
-        return applyFileStatusService.findApply(request, pageNum);
+    public ApiResult<Page<ApplyDto>> applyList(HttpServletRequest request, @PathVariable int pageNum) {
+        return ApiResult.OK(applyFileStatusService.findApply(request, pageNum));
     }
 
     //사용자가 지원한 지원 파일 정보
     @ResponseBody
     @GetMapping("/file/{applyId}")
-    public FileApplyDto applyFileDetails(HttpServletRequest request, @PathVariable Long applyId) {
-        return applyFileStatusService.findApplyFileByApplyId(request, applyId);
+    public ApiResult<FileApplyDto> applyFileDetails(HttpServletRequest request, @PathVariable Long applyId) {
+        return ApiResult.OK(applyFileStatusService.findApplyFileByApplyId(request, applyId));
     }
 
     //사용자가 지원한 지원 파일 삭제
     @ResponseBody
     @DeleteMapping("/file/{applyId}")
-    public ApiResponse applyFileRemove(HttpServletRequest request, @PathVariable Long applyId) {
-        return applyFileDeleteService.removeApplyFile(request, applyId);
+    public ApiResult<Boolean> applyFileRemove(HttpServletRequest request, @PathVariable Long applyId) {
+        if (applyFileDeleteService.removeApplyFile(request, applyId)){
+            return ApiResult.OK(Boolean.TRUE);
+        }
+        else{
+            throw new IllegalArgumentException("not founded");
+        }
     }
 
     //관리자가 작성한 게시물의 지원한 지원서 정보들
     @GetMapping("/{noticeId}/{pageNum}")
-    public PageImpl<Object> applyManagerList(@PathVariable Long noticeId, @PathVariable int pageNum) {
-        return applyFileStatusService.findApplyFileByNoticeId(noticeId, pageNum);
+    public ApiResult<PageImpl<Object>> applyManagerList(@PathVariable Long noticeId, @PathVariable int pageNum) {
+        return ApiResult.OK(applyFileStatusService.findApplyFileByNoticeId(noticeId, pageNum));
     }
 
     //사용자가 파일을 제출할때
     @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
     @PostMapping(value="/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponse applyFileAdd(HttpServletRequest request, @RequestPart(name="file", required = false) MultipartFile multipartFile, @RequestParam("noticeId") Long noticeId) {
-        return applyFileResgisterService.addApplyFile(request, multipartFile, noticeId);
+    public ApiResult applyFileAdd(HttpServletRequest request, @RequestPart(name="file", required = false) MultipartFile multipartFile, @RequestParam("noticeId") Long noticeId) {
+        return ApiResult.OK(applyFileResgisterService.addApplyFile(request, multipartFile, noticeId));
     }
 
     //파일 다운로드

@@ -26,7 +26,7 @@ public class ApplyFileDeleteService {
   private final MemberStatusService memberStatusService;
 
   //사용자가 지원한 지원 파일 삭제
-  public ApiResponse removeApplyFile(HttpServletRequest request, @PathVariable Long applyId) {
+  public Boolean removeApplyFile(HttpServletRequest request, @PathVariable Long applyId) {
 
     MemberDao currentMember = memberStatusService.findMember(request).get();
 
@@ -36,12 +36,12 @@ public class ApplyFileDeleteService {
       if (currentMember.getId().equals(apply.get().getMemberId())) {
         applyFileRepository.deleteById(applyId);
         memberApplyRepository.deleteById(apply.get().getId());
-        return new ApiResponse(Boolean.TRUE,"정상적으로 삭제되었습니다.");
+        return true;
       } else {
         log.info("wrong");
-        return new ApiResponse(Boolean.FALSE,"잘못된 접근입니다.");
+        return false;
       }
     }
-    return new ApiResponse(Boolean.FALSE,"잘못된 접근입니다.");
+    return false;
   }
 }

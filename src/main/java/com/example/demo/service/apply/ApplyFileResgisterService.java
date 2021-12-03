@@ -61,7 +61,7 @@ public class ApplyFileResgisterService {
 
         Optional<MemberApply> apply = memberApplyRepository.findByNoticeWithMember(noticeId,currentMember.getId());
         log.info("apply = {}", apply);
-        log.info("apply.name = {}", apply.get().getNoticeId());
+//        log.info("apply.name = {}", apply.get().getNoticeId());
         if (apply.isPresent()){
             return new ApiResponse(false,"이미 신청한 게시물입니다.");
         }
