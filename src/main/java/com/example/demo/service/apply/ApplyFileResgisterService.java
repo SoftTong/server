@@ -45,7 +45,7 @@ public class ApplyFileResgisterService {
 
     public ApplyFileNoticeEntity addApplyFileNotice(String filePath, MemberDao memberDao, NoticeEntity noticeEntity, String fileName){
 
-        ApplyFileNoticeEntity applyFileNotice = new ApplyFileNoticeEntity(filePath, memberDao, noticeEntity, fileName);
+        ApplyFileNoticeEntity applyFileNotice = ApplyFileNoticeEntity.createApplyFileNotice(filePath, memberDao, noticeEntity, fileName);
         applyFileNotice.setStatus(StatusName.wait); //처음은 대기 상태로 저장
         ApplyFileNoticeEntity savedApplyFileNotice = applyFileRepository.save(applyFileNotice);
         MemberApply memberApply = new MemberApply(memberDao.getId(), noticeEntity.getId(), savedApplyFileNotice.getId(),"file");
