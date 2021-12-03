@@ -82,6 +82,7 @@ public class ApplyFileStatusService {
       throw new IllegalStateException("올바르지 않은 공지사항입니다.");
     }
 
+
   }
 
   //지원한 파일 다운로드
