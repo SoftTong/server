@@ -17,7 +17,6 @@ public class FileNoticeDto extends NoticeInfoDto{
     private String swurl;
     private String tag1;
     private String tag2;
-
     private String tag3;
     private Timestamp uploadDay;
     private Date startDay;

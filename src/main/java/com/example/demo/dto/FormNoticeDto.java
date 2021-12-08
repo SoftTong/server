@@ -10,7 +10,10 @@ import java.sql.Timestamp;
 
 @Getter @Setter
 public class FormNoticeDto extends NoticeInfoDto {
-    // 폼 형식 공지사항 Dto
+
+    private String description; //ex) "나이는?$$$학과는?$$$"
+
+    //밑에꺼 필요 없음
     private Long id;
     private String name;
     private String swurl;
@@ -22,7 +25,6 @@ public class FormNoticeDto extends NoticeInfoDto {
     private Date destDay;
     private int viewCount;
     private String authorName;
-    private String description;
     private Boolean isForm;
 
     public FormNoticeDto() {
