@@ -1,6 +1,7 @@
 package com.example.demo.domain.entity;
 
 import com.example.demo.dao.MemberDao;
+import com.example.demo.dto.FormAnswerDto;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -21,4 +22,14 @@ public class FormAnswer {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private MemberDao memberDao;
+
+    protected FormAnswer() {
+
+    }
+
+    public FormAnswer(FormQuestion formQuestion, MemberDao user, FormAnswerDto formAnswerDto) {
+        this.formQuestion = formQuestion;
+        this.memberDao = user;
+        this.content = formAnswerDto.getContent();
+    }
 }
