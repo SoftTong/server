@@ -8,7 +8,10 @@ import com.example.demo.dto.FileNoticeDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,5 +27,12 @@ public interface ApplyFileRepository extends JpaRepository<ApplyFileNoticeEntity
 
     List<ApplyFileNoticeEntity> findAllByMemberDao(MemberDao memberDao);
 
+    List<ApplyFileNoticeEntity> findAllByNoticeEntity(NoticeEntity noticeEntity);
+
     Optional<ApplyFileNoticeEntity> findById(Long id);
+
+    @Transactional
+    @Modifying
+    @Query(value = "delete from ApplyFileNoticeEntity a where a.id in :ids")
+    void deleteAllByIdInQuery(@Param("ids") List<Long> ids);
 }

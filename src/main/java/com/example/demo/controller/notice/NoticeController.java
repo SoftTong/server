@@ -5,6 +5,7 @@ import com.example.demo.dao.MemberDao;
 import com.example.demo.dto.FormNoticeDto;
 import com.example.demo.dto.FileNoticeDto;
 import com.example.demo.service.member.MemberStatusService;
+import com.example.demo.service.notice.NoticeDeleteService;
 import com.example.demo.service.notice.NoticeRegisterService;
 import com.example.demo.service.notice.NoticeStatusService;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class NoticeController {
     private final NoticeStatusService noticeStatusService;
     private final NoticeRegisterService noticeRegisterService;
     private final MemberStatusService memberStatusService;
+    private final NoticeDeleteService noticeDeleteService;
 
     @ResponseBody
     @GetMapping("/{pageNum}")
@@ -95,5 +97,12 @@ public class NoticeController {
     @GetMapping("/managers/{pageNum}")
     public ApiResult<?> noticeManagerList(HttpServletRequest req, @PathVariable int pageNum) {
         return ApiResult.OK(noticeStatusService.findAllByManager(req, pageNum));
+    }
+
+    // 공지사항 삭제
+    @ResponseBody
+    @PostMapping("/remove/{noticeId}")
+    public ApiResult<?> noticeRemove(@PathVariable Long noticeId) {
+        return ApiResult.OK(noticeDeleteService.removeNotice(noticeId));
     }
 }
