@@ -2,16 +2,16 @@ package com.example.demo.controller;
 
 import com.example.demo.dao.MemberDao;
 import com.example.demo.domain.entity.ApplyFileNoticeEntity;
+import com.example.demo.domain.entity.FormAnswer;
 import com.example.demo.domain.entity.MemberApply;
 import com.example.demo.domain.entity.NoticeEntity;
-import com.example.demo.dto.ApplyDto;
-import com.example.demo.dto.FileApplyDto;
-import com.example.demo.dto.NoticeInfoDto;
+import com.example.demo.dto.*;
 import com.example.demo.payload.ApiResponse;
 import com.example.demo.service.MemberService;
 import com.example.demo.service.apply.ApplyFileDeleteService;
 import com.example.demo.service.apply.ApplyFileResgisterService;
 import com.example.demo.service.apply.ApplyFileStatusService;
+import com.example.demo.service.apply.ApplyFormRegisterService;
 import com.example.demo.service.member.MemberStatusService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +50,7 @@ public class ApplyController {
     private final ApplyFileStatusService applyFileStatusService;
     private final ApplyFileDeleteService applyFileDeleteService;
     private final ApplyFileResgisterService applyFileResgisterService;
+    private final ApplyFormRegisterService applyFormRegisterService;
 
     //사용자가 지원한 지원서들 가져오기
     @ResponseBody
@@ -90,6 +91,14 @@ public class ApplyController {
     @PostMapping(value="/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResult<?> applyFileAdd(HttpServletRequest request, @RequestPart(name="file", required = false) MultipartFile multipartFile, @RequestParam("noticeId") Long noticeId) {
         return applyFileResgisterService.addApplyFile(request, multipartFile, noticeId);
+    }
+
+    //사용자가 폼을 제출할때
+    @Secured({"ROLE_USER","ROLE_ADMIN"})
+    @ResponseBody
+    @PostMapping(value="/form/{formQuestionId}")
+    public ApiResult<?> applyFormAdd(HttpServletRequest request, @RequestBody FormAnswerDto formAnswerDto, @PathVariable Long formQuestionId) {
+        return applyFormRegisterService.addApplyForm(request, formAnswerDto, formQuestionId);
     }
 
     //파일 다운로드
