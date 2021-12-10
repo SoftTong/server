@@ -24,13 +24,9 @@ public class RoleStatusService {
         if (findMember.isEmpty()) return false;
 
         MemberDao member = findMember.get();
-
         role = "ROLE_"+role.toUpperCase();
         RoleDao roleDao = roleRepository.findByName(RoleName.valueOf(role)).orElseThrow(() -> new AppException("Admin Role not set"));
         member.addRoles(roleDao);
-        log.info("여기까진 되나??");
-        log.info("{}",member.getName());
-        log.info("roel = {}", role);
         memberRepository.save(member);
         return true;
     }
@@ -40,13 +36,9 @@ public class RoleStatusService {
         if (findMember.isEmpty()) return false;
 
         MemberDao member = findMember.get();
-
         role = "ROLE_"+role.toUpperCase();
         RoleDao roleDao = roleRepository.findByName(RoleName.valueOf(role)).orElseThrow(() -> new AppException("Admin Role not set"));
         member.removeRoles(roleDao);
-        log.info("여기까진 되나??");
-        log.info("{}",member.getName());
-        log.info("roel = {}", role);
         memberRepository.save(member);
         return true;
     }
