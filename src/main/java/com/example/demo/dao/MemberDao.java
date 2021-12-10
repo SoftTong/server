@@ -53,6 +53,13 @@ public class MemberDao extends DateAudit {
         inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<RoleDao> roles = new HashSet<>();
 
+    public void addRoles(RoleDao roleDao) {
+        this.roles.add(roleDao);
+    }
+    public void removeRoles(RoleDao roleDao) {
+        this.roles.remove(roleDao);
+    }
+
     public MemberDao() {
 
     }
