@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 public class FormNoticeDto extends NoticeInfoDto {
 
     private String description; //ex) "나이는?$$$학과는?$$$"
+    private Long QuestionId;
 
     //밑에꺼 필요 없음
     private Long id;
@@ -32,7 +33,7 @@ public class FormNoticeDto extends NoticeInfoDto {
     }
 
     @Builder
-    public FormNoticeDto(FormNotice noticeEntity, Boolean isForm) {
+    public FormNoticeDto(FormNotice noticeEntity, Boolean isForm, Long QuestionId) {
         this.id = noticeEntity.getId();
         this.name = noticeEntity.getName();
         this.swurl = noticeEntity.getSwurl();
@@ -46,6 +47,7 @@ public class FormNoticeDto extends NoticeInfoDto {
         this.authorName = noticeEntity.getMemberDao().getName();
         this.description = noticeEntity.getDescription();
         this.isForm = isForm;
+        this.QuestionId = QuestionId;
     }
 
 }

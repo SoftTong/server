@@ -4,6 +4,7 @@ import com.example.demo.controller.notice.NoticeType;
 import com.example.demo.dao.MemberDao;
 import com.example.demo.domain.entity.*;
 import com.example.demo.domain.repository.ApplyFileRepository;
+import com.example.demo.domain.repository.FormQuestionRepository;
 import com.example.demo.domain.repository.MemberApplyRepository;
 import com.example.demo.domain.repository.NoticeRepository;
 import com.example.demo.dto.FileNoticeDto;
@@ -35,6 +36,7 @@ public class NoticeStatusService {
   private final ApplyFileRepository applyFileRepository;
   private final MemberApplyRepository memberApplyRepository;
   private final MemberStatusService memberStatusService;
+  private final FormQuestionRepository formQuestionRepository;
 
   public NoticeEntity findById(Long noticeId) {
     Optional<NoticeEntity> findNotice = noticeRepository.findById(noticeId);
@@ -104,7 +106,8 @@ public class NoticeStatusService {
 
   public NoticeType<? extends NoticeInfoDto> getFormNotice(Long noticeNum) {
     FormNotice formNotice = (FormNotice) noticeRepository.findById(noticeNum).get();
-    FormNoticeDto formNoticeDto = new FormNoticeDto(formNotice, Boolean.TRUE); // Form 타입이므로 True를 같이 넘김
+    Long QuestionId = formQuestionRepository.findByFormNotice(formNotice).get().getId();
+    FormNoticeDto formNoticeDto = new FormNoticeDto(formNotice, Boolean.TRUE, QuestionId); // Form 타입이므로 True를 같이 넘김, 해당 Form 질문의 ID도 넘김
     NoticeType<FormNoticeDto> noticeType = new NoticeType<>();
     noticeType.setNotice(formNoticeDto);
     return noticeType;

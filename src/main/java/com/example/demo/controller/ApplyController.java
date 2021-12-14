@@ -96,9 +96,9 @@ public class ApplyController {
     //사용자가 폼을 제출할때
     @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
-    @PostMapping(value="/form/{formQuestionId}")
-    public ApiResult<?> applyFormAdd(HttpServletRequest request, @RequestBody FormAnswerDto formAnswerDto, @PathVariable Long formQuestionId) {
-        return applyFormRegisterService.addApplyForm(request, formAnswerDto, formQuestionId);
+    @PostMapping(value="/form/{QuestionId}")
+    public ApiResult<?> applyFormAdd(HttpServletRequest request, @RequestBody FormAnswerDto formAnswerDto, @PathVariable Long QuestionId) {
+        return applyFormRegisterService.addApplyForm(request, formAnswerDto, QuestionId);
     }
 
     //파일 다운로드
