@@ -4,6 +4,7 @@ import com.example.demo.controller.ApiResult;
 import com.example.demo.dao.MemberDao;
 import com.example.demo.dto.FormNoticeDto;
 import com.example.demo.dto.FileNoticeDto;
+import com.example.demo.dto.NoticeInfoDto;
 import com.example.demo.service.member.MemberStatusService;
 import com.example.demo.service.notice.NoticeDeleteService;
 import com.example.demo.service.notice.NoticeRegisterService;
@@ -15,7 +16,9 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -104,5 +107,35 @@ public class NoticeController {
     @PostMapping("/remove/{noticeId}")
     public ApiResult<?> noticeRemove(@PathVariable Long noticeId) {
         return ApiResult.OK(noticeDeleteService.removeNotice(noticeId));
+    }
+
+    @ResponseBody
+    @PostMapping("/like/{noticeId}")
+    public ApiResult<?> noticeLike(HttpServletRequest request, @PathVariable Long noticeId){
+        MemberDao user = memberStatusService.findMember(request).get();
+
+        if(noticeStatusService.findByLike(user.getId(),noticeId).isPresent()){
+            noticeStatusService.dislikeNotice(user.getId(),noticeId);
+
+            return ApiResult.OK("User dislike a notice");
+        }else{
+            noticeStatusService.likeNotice(user.getId(),noticeId);
+
+            return ApiResult.OK("User like a notice");
+        }
+    }
+
+    @ResponseBody
+    @GetMapping(value="/like")
+    public ApiResult<?> memberNoticeLike(HttpServletRequest request){
+        Long userId = memberStatusService.findMember(request).get().getId();
+
+        List<NoticeInfoDto> noticeInfoDtoList = new ArrayList<>();
+
+        for (Long noticeId : noticeStatusService.noticeUserLike(userId)) {
+            noticeInfoDtoList.add(new NoticeInfoDto(noticeStatusService.findById(noticeId)));
+        }
+
+        return ApiResult.OK(noticeInfoDtoList);
     }
 }

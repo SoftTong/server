@@ -24,6 +24,7 @@ public class NoticeInfoDto {
     private Date destDay;
     private int viewCount;
     private String authorName;
+    private Long likeCount;
 
     public NoticeInfoDto() {
 
@@ -42,5 +43,6 @@ public class NoticeInfoDto {
         this.destDay = noticeEntity.getDestDay();
         this.viewCount = noticeEntity.getViewCount();
         this.authorName = noticeEntity.getMemberDao().getName();
+        this.likeCount = noticeEntity.getLikeCount();
     }
 }

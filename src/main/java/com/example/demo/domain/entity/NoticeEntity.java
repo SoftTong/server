@@ -42,8 +42,21 @@ public abstract class NoticeEntity {
     @JoinColumn(name = "member_id")
     private MemberDao memberDao;
 
+    @Column(columnDefinition = "integer default 0")
+    private Long likeCount;
+
     protected NoticeEntity() {
 
+    }
+
+    public void likeUp(){
+        if (this.likeCount == null)
+            this.likeCount=0L;
+        this.likeCount++;
+    }
+
+    public void likeDown(){
+        this.likeCount--;
     }
 
 }

@@ -1,8 +1,11 @@
 package com.example.demo.controller;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.example.demo.dao.MemberDao;
+import com.example.demo.domain.repository.NoticeLikeRepository;
 import com.example.demo.dto.MemberDto;
 import com.example.demo.dto.MemberStatusDto;
 import com.example.demo.service.MemberService;
@@ -47,5 +50,6 @@ public class MemberController {
 
         return ApiResult.OK(userInfo);
     }
+
 
 }

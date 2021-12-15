@@ -3,10 +3,7 @@ package com.example.demo.service.notice;
 import com.example.demo.controller.notice.NoticeType;
 import com.example.demo.dao.MemberDao;
 import com.example.demo.domain.entity.*;
-import com.example.demo.domain.repository.ApplyFileRepository;
-import com.example.demo.domain.repository.FormQuestionRepository;
-import com.example.demo.domain.repository.MemberApplyRepository;
-import com.example.demo.domain.repository.NoticeRepository;
+import com.example.demo.domain.repository.*;
 import com.example.demo.dto.FileNoticeDto;
 import com.example.demo.dto.FormNoticeDto;
 import com.example.demo.dto.NoticeInfoDto;
@@ -22,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -37,6 +35,8 @@ public class NoticeStatusService {
   private final MemberApplyRepository memberApplyRepository;
   private final MemberStatusService memberStatusService;
   private final FormQuestionRepository formQuestionRepository;
+  private final NoticeLikeRepository noticeLikeRepository;
+
 
   public NoticeEntity findById(Long noticeId) {
     Optional<NoticeEntity> findNotice = noticeRepository.findById(noticeId);
@@ -122,6 +122,38 @@ public class NoticeStatusService {
     List<NoticeInfoDto> noticeInfoDtoList = noticeEntityPages.stream().map(nep -> new NoticeInfoDto(nep)).collect((toList()));
 
     return new PageImpl<>(noticeInfoDtoList, pageable, noticeEntityPages.getTotalElements());
+  }
+
+  public Optional<NoticeLike> findByLike(Long userId,Long noticeId){
+    return noticeLikeRepository.findByLike(userId,noticeId);
+  }
+
+  public List<Long> noticeUserLike(Long userId){
+    return noticeLikeRepository.findAllByUserId(userId)
+            .stream()
+            .map(noticeLike -> noticeLike.getNoticeId())
+            .collect(Collectors.toList());
+  }
+
+  @Transactional(readOnly = false)
+  public void likeNotice(Long userId,Long noticeId){
+
+    NoticeEntity notice = noticeRepository.findById(noticeId).get();
+    notice.likeUp();
+    noticeRepository.save(notice);
+
+    NoticeLike noticeLike = new NoticeLike(userId,noticeId);
+    noticeLikeRepository.save(noticeLike);
+  }
+
+  @Transactional(readOnly = false)
+  public void dislikeNotice(Long userId,Long noticeId){
+
+    NoticeEntity notice = noticeRepository.findById(noticeId).get();
+    notice.likeDown();
+    noticeRepository.save(notice);
+
+    noticeLikeRepository.deleteByLike(userId, noticeId);
   }
 
 
