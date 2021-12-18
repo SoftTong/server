@@ -1,17 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.dao.MemberDao;
-import com.example.demo.domain.entity.ApplyFileNoticeEntity;
-import com.example.demo.domain.entity.FormAnswer;
-import com.example.demo.domain.entity.MemberApply;
-import com.example.demo.domain.entity.NoticeEntity;
+import com.example.demo.domain.entity.*;
 import com.example.demo.dto.*;
 import com.example.demo.payload.ApiResponse;
 import com.example.demo.service.MemberService;
-import com.example.demo.service.apply.ApplyFileDeleteService;
-import com.example.demo.service.apply.ApplyFileResgisterService;
-import com.example.demo.service.apply.ApplyFileStatusService;
-import com.example.demo.service.apply.ApplyFormRegisterService;
+import com.example.demo.service.apply.*;
 import com.example.demo.service.member.MemberStatusService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,12 +45,13 @@ public class ApplyController {
     private final ApplyFileDeleteService applyFileDeleteService;
     private final ApplyFileResgisterService applyFileResgisterService;
     private final ApplyFormRegisterService applyFormRegisterService;
+    private final ApplyStatusService applyStatusService;
 
     //사용자가 지원한 지원서들 가져오기
     @ResponseBody
     @GetMapping("/{pageNum}")
-    public ApiResult<Page<ApplyDto>> applyList(HttpServletRequest request, @PathVariable int pageNum) {
-        return ApiResult.OK(applyFileStatusService.findApply(request, pageNum));
+    public ApiResult<Page<ApplyResource>> applyList(HttpServletRequest request, @PathVariable int pageNum) {
+        return ApiResult.OK(applyStatusService.findApply(request, pageNum));
     }
 
     //사용자가 지원한 지원 파일 정보
