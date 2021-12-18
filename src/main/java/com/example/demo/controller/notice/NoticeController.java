@@ -97,6 +97,7 @@ public class NoticeController {
     }
 
     //관리자가 작성한 게시물 목록 가져오기
+    @ResponseBody
     @GetMapping("/managers/{pageNum}")
     public ApiResult<?> noticeManagerList(HttpServletRequest req, @PathVariable int pageNum) {
         return ApiResult.OK(noticeStatusService.findAllByManager(req, pageNum));
