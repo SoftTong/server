@@ -11,14 +11,14 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-    url: jdbc:mysql://localhost:3306/sotong?serverTimezone=Asia/Seoul
-    username: root
-    password: 1234
+#    url: jdbc:mysql://localhost:3306/sotong?serverTimezone=Asia/Seoul
+#    username: root
+#    password: 1234
 
 #     docker
-#    url: jdbc:mysql://mysql:3306/sotong?serverTimezone=UTC&characterEncoding=UTF-8
-#    username: sotong
-#    password: sotong
+    url: jdbc:mysql://mysql:3306/sotong?serverTimezone=UTC&characterEncoding=UTF-8
+    username: sotong
+    password: sotong
 
 
   jpa:
