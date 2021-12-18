@@ -2,10 +2,8 @@ package com.example.demo.service.apply;
 
 import com.example.demo.controller.ApiResult;
 import com.example.demo.dao.MemberDao;
-import com.example.demo.domain.entity.FormAnswer;
-import com.example.demo.domain.entity.FormQuestion;
-import com.example.demo.domain.entity.MemberApply;
-import com.example.demo.domain.entity.NoticeEntity;
+import com.example.demo.domain.entity.*;
+import com.example.demo.domain.repository.ApplyResourceRepository;
 import com.example.demo.domain.repository.FormAnswerRepository;
 import com.example.demo.domain.repository.FormQuestionRepository;
 import com.example.demo.dto.FormAnswerDto;
@@ -37,6 +35,7 @@ public class ApplyFormRegisterService {
     private final FormQuestionRepository formQuestionRepository;
     private final FormAnswerRepository formAnswerRepository;
     private final MemberStatusService memberStatusService;
+    private final ApplyResourceRepository applyResourceRepository;
 
     @Secured({"ROLE_USER","ROLE_ADMIN"})
     @ResponseBody
@@ -45,6 +44,7 @@ public class ApplyFormRegisterService {
         FormQuestion formQuestion = formQuestionRepository.findById(formQuestionId).get();
         MemberDao currentMember = memberStatusService.findMember(request).get();
 
+        applyResourceRepository.save(new ApplyFormNotice(formAnswerDto, currentMember, formQuestion.getFormNotice()));
         formAnswerRepository.save(new FormAnswer(formQuestion,currentMember,formAnswerDto));
 
         return ApiResult.OK(formAnswerDto);

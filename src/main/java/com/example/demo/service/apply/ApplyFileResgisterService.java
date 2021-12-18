@@ -2,11 +2,9 @@ package com.example.demo.service.apply;
 
 import com.example.demo.controller.ApiResult;
 import com.example.demo.dao.MemberDao;
-import com.example.demo.domain.entity.ApplyFileNoticeEntity;
-import com.example.demo.domain.entity.MemberApply;
-import com.example.demo.domain.entity.NoticeEntity;
-import com.example.demo.domain.entity.StatusName;
+import com.example.demo.domain.entity.*;
 import com.example.demo.domain.repository.ApplyFileRepository;
+import com.example.demo.domain.repository.ApplyResourceRepository;
 import com.example.demo.domain.repository.MemberApplyRepository;
 import com.example.demo.payload.ApiResponse;
 import com.example.demo.service.member.MemberStatusService;
@@ -42,15 +40,19 @@ public class ApplyFileResgisterService {
     private final MemberApplyRepository memberApplyRepository;
     private final MemberStatusService memberStatusService;
     private final NoticeStatusService noticeStatusService;
+    private final ApplyResourceRepository applyResourceRepository;
 
-    public ApplyFileNoticeEntity addApplyFileNotice(String filePath, MemberDao memberDao, NoticeEntity noticeEntity, String fileName){
+    public boolean addApplyFileSave(String filePath, MemberDao memberDao, NoticeEntity noticeEntity, String fileName){
 
-        ApplyFileNoticeEntity applyFileNotice = ApplyFileNoticeEntity.createApplyFileNotice(filePath, memberDao, noticeEntity, fileName);
-        applyFileNotice.setStatus(StatusName.wait); //처음은 대기 상태로 저장
-        ApplyFileNoticeEntity savedApplyFileNotice = applyFileRepository.save(applyFileNotice);
-        MemberApply memberApply = new MemberApply(memberDao.getId(), noticeEntity.getId(), savedApplyFileNotice.getId(),"file");
-        memberApplyRepository.save(memberApply);
-        return applyFileNotice;
+        log.info("test1");
+        applyResourceRepository.save(new ApplyFileNoticeEntity(filePath, fileName, memberDao, (FileNotice)noticeEntity));
+
+        //ApplyFileNoticeEntity applyFileNotice = ApplyFileNoticeEntity.createApplyFileNotice(filePath, memberDao, noticeEntity, fileName);
+        //applyFileNotice.setStatus(StatusName.wait); //처음은 대기 상태로 저장
+        //ApplyFileNoticeEntity savedApplyFileNotice = applyFileRepository.save(applyFileNotice);
+        //MemberApply memberApply = new MemberApply(memberDao.getId(), noticeEntity.getId(), savedApplyFileNotice.getId(),"file");
+        //memberApplyRepository.save(memberApply);
+        return true;
     }
 
     //사용자가 파일을 제출할때
@@ -61,12 +63,13 @@ public class ApplyFileResgisterService {
         MemberDao currentMember = memberStatusService.findMember(request).get();
         NoticeEntity noticeEntity = noticeStatusService.findById(noticeId);
 
-        Optional<MemberApply> apply = memberApplyRepository.findByNoticeWithMember(noticeId,currentMember.getId());
+        Optional<ApplyResource> apply = applyResourceRepository.findByNoticeWithMember(noticeEntity,currentMember);
         log.info("apply = {}", apply);
         //log.info("apply.name = {}", apply.get().getNoticeId());
         if (apply.isPresent()){
             return ApiResult.ERROR(new IllegalStateException("이미 신청한 게시물입니다."), HttpStatus.BAD_REQUEST);
         }
+
 
         //File클래스를 통해 파일과 디렉터리를 다룬다 -> File인스턴스는 파일일 수 도 있고 디렉터리 일 수 도 있다다
         //MultipartFile을 받아와서 그 FileInputStream을 얻고 빈 targetFile에 스트림을 복사
@@ -74,16 +77,19 @@ public class ApplyFileResgisterService {
         String extension = FilenameUtils.getExtension(multipartFile.getOriginalFilename());
         File targetFile = new File("src/main/resources/menufiles/" + uid.toString() + "." + extension);
         try {
+            log.info("test2");
             InputStream fileStream = multipartFile.getInputStream();
             FileUtils.copyInputStreamToFile(fileStream, targetFile);
-            addApplyFileNotice(uid.toString() + "." + extension, currentMember, noticeEntity, multipartFile.getOriginalFilename());
+            addApplyFileSave(uid.toString() + "." + extension, currentMember, noticeEntity, multipartFile.getOriginalFilename());
 
             return ApiResult.OK(uid.toString());
         } catch (IOException e) {
+            log.info("test3");
             FileUtils.deleteQuietly(targetFile); //지움
             e.printStackTrace();
         }
 
+        log.info("test4");
         return ApiResult.ERROR(new IllegalStateException("서버 오류입니다."), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
