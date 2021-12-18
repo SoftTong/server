@@ -45,8 +45,8 @@ public class ApplyFileStatusService {
   private final MemberStatusService memberStatusService;
   private final NoticeStatusService noticeStatusService;
 
-  public Page<ApplyFileNoticeEntity> findMemberById(Long noticeId, Pageable page){
-    return applyFileRepository.findMemberById(noticeId, page);
+  public Page<ApplyFileNoticeEntity> findByNoticeId(Long noticeId, Pageable page){
+    return applyFileRepository.findByNoticeId(noticeId, page);
   }
 
   public Page<ApplyDto> findApply(HttpServletRequest request, @PathVariable int pageNum) {
@@ -67,13 +67,13 @@ public class ApplyFileStatusService {
   }
 
   //관리자가 작성한 게시물의 지원한 지원서 정보들 반환
-  public PageImpl<Object> findApplyFileByNoticeId(@PathVariable Long noticeId, @PathVariable int pageNum) {
+  public Page<FileApplyDto> findApplyFileByNoticeId(@PathVariable Long noticeId, @PathVariable int pageNum) {
 
     Pageable page = PageRequest.of(pageNum, 10, Sort.by("member_id").ascending());
     String dtype = (String) noticeStatusService.findDtypeById(noticeId);
 
     if (dtype.equals("file")) {
-      Page<ApplyFileNoticeEntity> applyPages = findMemberById(noticeId,page);
+      Page<ApplyFileNoticeEntity> applyPages = findByNoticeId(noticeId,page);
       List<FileApplyDto> fileApplyDtoList = applyPages.stream().map(a-> new FileApplyDto(a) ).collect((toList()));
       return new PageImpl(fileApplyDtoList, page, applyPages.getTotalElements());
     } else if (dtype.equals("form")) {
