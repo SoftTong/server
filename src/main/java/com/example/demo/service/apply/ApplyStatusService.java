@@ -39,7 +39,8 @@ public class ApplyStatusService {
         Pageable page = PageRequest.of(pageNum, 10, Sort.by("id").descending());
         MemberDao currentMember = memberStatusService.findMember(request).get();
         Page<ApplyResource> applyResourcePage = applyResourceRepository.findAllByMemberDao(currentMember, page);
-        List<ApplyListDto> collect = applyResourcePage.stream().map(applyResource -> new ApplyListDto(applyResource)).collect(toList());
+        List<ApplyListDto> collect = applyResourcePage.stream().map(applyResource ->
+                new ApplyListDto(applyResource, noticeRepository.findDtypeById(applyResource.getNoticeEntity().getId()))).collect(toList());
 
         return new PageImpl<>(collect, page, applyResourcePage.getTotalElements());
     }

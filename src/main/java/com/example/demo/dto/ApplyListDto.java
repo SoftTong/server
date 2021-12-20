@@ -17,13 +17,15 @@ public class ApplyListDto {
     private String userId;
     private Timestamp uploadDay;
     private Long applyId;
+    private String dtype;
 
-    public ApplyListDto(ApplyResource applyResource) {
+    public ApplyListDto(ApplyResource applyResource, Object dtype) {
         this.noticeTitle = applyResource.getNoticeEntity().getName();
         this.noticeId = applyResource.getNoticeEntity().getId();
         this.status = applyResource.getStatus();
         this.userId = applyResource.getMemberDao().getUserId();
         this.uploadDay = applyResource.getUploadDay();
         this.applyId = applyResource.getId();
+        this.dtype = (String) dtype;
     }
 }
