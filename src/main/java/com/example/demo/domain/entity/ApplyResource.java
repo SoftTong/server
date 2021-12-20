@@ -3,6 +3,7 @@ package com.example.demo.domain.entity;
 import com.example.demo.dao.MemberDao;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -21,11 +22,13 @@ public abstract class ApplyResource {
     @CreationTimestamp
     private Timestamp uploadDay;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @BatchSize(size = 10)
     @JoinColumn(name = "member_id")
     private MemberDao memberDao;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @BatchSize(size = 10)
     @JoinColumn(name = "notice_id")
     private NoticeEntity noticeEntity;
 

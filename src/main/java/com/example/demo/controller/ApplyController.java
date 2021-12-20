@@ -50,7 +50,7 @@ public class ApplyController {
     //사용자가 지원한 지원서들 가져오기
     @ResponseBody
     @GetMapping("/{pageNum}")
-    public ApiResult<Page<ApplyResource>> applyList(HttpServletRequest request, @PathVariable int pageNum) {
+    public ApiResult<Page<ApplyListDto>> applyList(HttpServletRequest request, @PathVariable int pageNum) {
         return ApiResult.OK(applyStatusService.findApply(request, pageNum));
     }
 

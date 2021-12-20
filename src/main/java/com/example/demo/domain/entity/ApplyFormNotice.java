@@ -3,6 +3,7 @@ package com.example.demo.domain.entity;
 import com.example.demo.dao.MemberDao;
 import com.example.demo.dto.FileNoticeDto;
 import com.example.demo.dto.FormAnswerDto;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +14,7 @@ import javax.persistence.Entity;
 @Getter
 @Entity
 @DiscriminatorValue("form")
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class ApplyFormNotice extends ApplyResource {
     private String content;
 
