@@ -76,8 +76,9 @@ public class ApplyController {
     //관리자가 작성한 게시물의 지원한 지원서 정보들
     @ResponseBody
     @GetMapping("/{noticeId}/{pageNum}")
-    public ApiResult<Page<FileApplyDto>> applyManagerList(@PathVariable Long noticeId, @PathVariable int pageNum) {
-        return ApiResult.OK(applyFileStatusService.findApplyFileByNoticeId(noticeId, pageNum));
+    public ApiResult<Page<?>> applyManagerList(@PathVariable Long noticeId, @PathVariable int pageNum) {
+        return ApiResult.OK(applyStatusService.findApplyByNoticeId(noticeId, pageNum));
+        //return ApiResult.OK(applyFileStatusService.findApplyFileByNoticeId(noticeId, pageNum));
     }
 
     //사용자가 파일을 제출할때
