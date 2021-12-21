@@ -4,10 +4,9 @@ import com.example.demo.controller.ApiResult;
 import com.example.demo.dao.MemberDao;
 import com.example.demo.domain.entity.*;
 import com.example.demo.domain.repository.ApplyResourceRepository;
+import com.example.demo.domain.repository.FormQuestionRepository;
 import com.example.demo.domain.repository.NoticeRepository;
-import com.example.demo.dto.ApplyFileDto;
-import com.example.demo.dto.ApplyFormDto;
-import com.example.demo.dto.ApplyListDto;
+import com.example.demo.dto.*;
 import com.example.demo.service.member.MemberStatusService;
 import com.example.demo.service.notice.NoticeStatusService;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +32,11 @@ public class ApplyStatusService {
     private final MemberStatusService memberStatusService;
     private final NoticeRepository noticeRepository;
     private final NoticeStatusService noticeStatusService;
+    private final FormQuestionRepository formQuestionRepository;
+
+    public Object findDtypeById(Long applyId){
+        return applyResourceRepository.findDtypeById(applyId);
+    }
 
     public Page<ApplyListDto> findApply(HttpServletRequest request, @PathVariable int pageNum) {
 
@@ -43,6 +47,26 @@ public class ApplyStatusService {
                 new ApplyListDto(applyResource, noticeRepository.findDtypeById(applyResource.getNoticeEntity().getId()))).collect(toList());
 
         return new PageImpl<>(collect, page, applyResourcePage.getTotalElements());
+    }
+
+    public ApiResult<?> findApplyByApplyId(HttpServletRequest request, Long applyId) {
+
+        String dtype = (String) findDtypeById(applyId);
+
+        log.debug("dtype = {}", dtype);
+        if (dtype.equals("file")) { // File 형식 제출일때
+            ApplyFileNoticeEntity applyFileNoticeEntity = (ApplyFileNoticeEntity)applyResourceRepository.findById(applyId).get();
+            return ApiResult.OK(new FileApplyDto(applyFileNoticeEntity));
+        }
+        // Form 형식 제출일때
+        ApplyFormNotice applyFormNotice = (ApplyFormNotice)applyResourceRepository.findById(applyId).get();
+        FormApplyDto formApplyDto = new FormApplyDto(applyFormNotice);
+
+        FormNotice noticeEntity = (FormNotice)applyFormNotice.getNoticeEntity();
+        FormQuestion formQuestion = formQuestionRepository.findByFormNotice(noticeEntity).get();
+        formApplyDto.setQuestion(formQuestion.getDescription());
+
+        return ApiResult.OK(formApplyDto);
     }
 
 

@@ -54,11 +54,27 @@ public class ApplyController {
         return ApiResult.OK(applyStatusService.findApply(request, pageNum));
     }
 
+    /*
     //사용자가 지원한 지원 파일 정보
     @ResponseBody
     @GetMapping("/file/{applyId}")
     public ApiResult<FileApplyDto> applyFileDetails(HttpServletRequest request, @PathVariable Long applyId) {
         return ApiResult.OK(applyFileStatusService.findApplyFileByApplyId(request, applyId));
+    }
+
+    //사용자가 지원한 지원 폼 정보
+    @ResponseBody
+    @GetMapping("/form/{applyId}")
+    public ApiResult<FormApplyDto> applyFormDetails(HttpServletRequest request, @PathVariable Long applyId) {
+        return ApiResult.OK(applyFormStatusService.findApplyFormByApplyId(request, applyId));
+    }
+    */
+
+    //사용자가 지원할 파일 또는 폼 정보
+    @ResponseBody
+    @GetMapping("/detail/{applyId}")
+    public ApiResult<?> applyDetails(HttpServletRequest request, @PathVariable Long applyId) {
+        return applyStatusService.findApplyByApplyId(request, applyId);
     }
 
     //사용자가 지원한 지원 파일 삭제

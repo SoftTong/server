@@ -23,5 +23,11 @@ public interface ApplyResourceRepository<T extends ApplyResource> extends JpaRep
 
     Page<T> findAllByNoticeEntity(NoticeEntity noticeEntity, Pageable pageable);
 
+    // 데이터 타입 찾기 (첨부파일 or 폼 형식)
+    @Query(value = "select n.dtype from apply_resource n where n.id = ?1", nativeQuery = true)
+    Object findDtypeById(Long applyId);
 
+
+    //id로 찾기
+    Optional<T> findById(Long id);
 }
