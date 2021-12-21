@@ -1,9 +1,13 @@
 package com.example.demo.service.apply;
 
 import com.example.demo.dao.MemberDao;
+import com.example.demo.domain.entity.ApplyResource;
 import com.example.demo.domain.entity.MemberApply;
+import com.example.demo.domain.entity.NoticeEntity;
 import com.example.demo.domain.repository.ApplyFileRepository;
+import com.example.demo.domain.repository.ApplyResourceRepository;
 import com.example.demo.domain.repository.MemberApplyRepository;
+import com.example.demo.domain.repository.NoticeRepository;
 import com.example.demo.payload.ApiResponse;
 import com.example.demo.service.member.MemberStatusService;
 import lombok.RequiredArgsConstructor;
@@ -21,21 +25,20 @@ import java.util.Optional;
 @Slf4j
 public class ApplyFileDeleteService {
 
-  private final MemberApplyRepository memberApplyRepository;
-  private final ApplyFileRepository applyFileRepository;
+
   private final MemberStatusService memberStatusService;
+  private final ApplyResourceRepository applyResourceRepository;
 
   //사용자가 지원한 지원 파일 삭제
-  public Boolean removeApplyFile(HttpServletRequest request, @PathVariable Long applyId) {
+  public Boolean removeApply(HttpServletRequest request, @PathVariable Long applyId) {
 
     MemberDao currentMember = memberStatusService.findMember(request).get();
 
-    Optional<MemberApply> apply = memberApplyRepository.findByApplyId(applyId);
+    Optional<ApplyResource> apply = applyResourceRepository.findById(applyId);
 
     if (apply.isPresent()) {
-      if (currentMember.getId().equals(apply.get().getMemberId())) {
-        applyFileRepository.deleteById(applyId);
-        memberApplyRepository.deleteById(apply.get().getId());
+      if (currentMember.getId().equals(apply.get().getMemberDao().getId())) {
+        applyResourceRepository.deleteById(applyId);
         return true;
       } else {
         log.info("wrong");
@@ -44,4 +47,5 @@ public class ApplyFileDeleteService {
     }
     return false;
   }
+
 }

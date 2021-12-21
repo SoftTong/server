@@ -63,9 +63,9 @@ public class ApplyController {
 
     //사용자가 지원한 지원 파일 삭제
     @ResponseBody
-    @DeleteMapping("/file/{applyId}")
+    @DeleteMapping("/detail/{applyId}")
     public ApiResult<Boolean> applyFileRemove(HttpServletRequest request, @PathVariable Long applyId) {
-        if (applyFileDeleteService.removeApplyFile(request, applyId)){
+        if (applyFileDeleteService.removeApply(request, applyId)){
             return ApiResult.OK(Boolean.TRUE);
         }
         else{

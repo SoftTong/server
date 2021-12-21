@@ -22,4 +22,6 @@ public interface ApplyResourceRepository<T extends ApplyResource> extends JpaRep
     Optional<T> findByNoticeWithMember(NoticeEntity noticeEntity, MemberDao memberDao);
 
     Page<T> findAllByNoticeEntity(NoticeEntity noticeEntity, Pageable pageable);
+
+
 }
