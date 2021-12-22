@@ -10,22 +10,11 @@ import com.example.demo.dto.FormAnswerDto;
 import com.example.demo.service.member.MemberStatusService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @Slf4j
@@ -44,7 +33,7 @@ public class ApplyFormRegisterService {
         FormQuestion formQuestion = formQuestionRepository.findById(formQuestionId).get();
         MemberDao currentMember = memberStatusService.findMember(request).get();
 
-        applyResourceRepository.save(new ApplyFormNotice(formAnswerDto, currentMember, formQuestion.getFormNotice()));
+        applyResourceRepository.save(new ApplyForm(formAnswerDto, currentMember, formQuestion.getFormNotice()));
         formAnswerRepository.save(new FormAnswer(formQuestion,currentMember,formAnswerDto));
 
         return ApiResult.OK(formAnswerDto);

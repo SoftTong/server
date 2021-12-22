@@ -1,8 +1,6 @@
 package com.example.demo.dto;
 
-import com.example.demo.domain.entity.ApplyFileNoticeEntity;
-import com.example.demo.domain.entity.ApplyFormNotice;
-import com.example.demo.domain.entity.ApplyResource;
+import com.example.demo.domain.entity.ApplyForm;
 import com.example.demo.domain.entity.StatusName;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +21,7 @@ public class ApplyFormDto {
     private Long noticeId;
     private Long applyId;
 
-    public ApplyFormDto(ApplyFormNotice applyResource) {
+    public ApplyFormDto(ApplyForm applyResource) {
         this.noticeTitle = applyResource.getNoticeEntity().getName();
         this.noticeUrl = applyResource.getNoticeEntity().getSwurl();
         this.content = applyResource.getContent();

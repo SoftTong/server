@@ -1,16 +1,11 @@
 package com.example.demo.dto;
 
-import com.example.demo.dao.MemberDao;
-import com.example.demo.domain.entity.ApplyFileNoticeEntity;
-import com.example.demo.domain.entity.ApplyFormNotice;
+import com.example.demo.domain.entity.ApplyForm;
 import com.example.demo.domain.entity.StatusName;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.CreationTimestamp;
 
-import java.lang.reflect.Member;
 import java.sql.Timestamp;
 
 @Getter
@@ -30,7 +25,7 @@ public class FormApplyDto {
     private String question;
     private String answer;
 
-    public FormApplyDto(ApplyFormNotice apply){
+    public FormApplyDto(ApplyForm apply){
         this.noticeTitle = apply.getNoticeEntity().getName();
         this.noticeUrl = apply.getNoticeEntity().getSwurl();
         this.status = apply.getStatus();

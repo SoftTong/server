@@ -15,14 +15,14 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("form")
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public class ApplyFormNotice extends ApplyResource {
+public class ApplyForm extends ApplyResource {
     private String content;
 
-    protected ApplyFormNotice() {
+    protected ApplyForm() {
 
     }
 
-    public ApplyFormNotice (FormAnswerDto formAnswerDto, MemberDao memberDao, FormNotice formNotice) {
+    public ApplyForm(FormAnswerDto formAnswerDto, MemberDao memberDao, FormNotice formNotice) {
         this.setMemberDao(memberDao);
         this.setNoticeEntity(formNotice);
         this.setStatus(StatusName.wait);

@@ -42,10 +42,10 @@ import static java.util.stream.Collectors.toList;
 public class ApplyController {
 
     private final ApplyFileStatusService applyFileStatusService;
-    private final ApplyFileDeleteService applyFileDeleteService;
     private final ApplyFileResgisterService applyFileResgisterService;
     private final ApplyFormRegisterService applyFormRegisterService;
     private final ApplyStatusService applyStatusService;
+    private final ApplyDeleteService applyDeleteService;
 
     //사용자가 지원한 지원서들 가져오기
     @ResponseBody
@@ -53,22 +53,6 @@ public class ApplyController {
     public ApiResult<Page<ApplyListDto>> applyList(HttpServletRequest request, @PathVariable int pageNum) {
         return ApiResult.OK(applyStatusService.findApply(request, pageNum));
     }
-
-    /*
-    //사용자가 지원한 지원 파일 정보
-    @ResponseBody
-    @GetMapping("/file/{applyId}")
-    public ApiResult<FileApplyDto> applyFileDetails(HttpServletRequest request, @PathVariable Long applyId) {
-        return ApiResult.OK(applyFileStatusService.findApplyFileByApplyId(request, applyId));
-    }
-
-    //사용자가 지원한 지원 폼 정보
-    @ResponseBody
-    @GetMapping("/form/{applyId}")
-    public ApiResult<FormApplyDto> applyFormDetails(HttpServletRequest request, @PathVariable Long applyId) {
-        return ApiResult.OK(applyFormStatusService.findApplyFormByApplyId(request, applyId));
-    }
-    */
 
     //사용자가 지원할 파일 또는 폼 정보
     @ResponseBody
@@ -81,7 +65,7 @@ public class ApplyController {
     @ResponseBody
     @DeleteMapping("/detail/{applyId}")
     public ApiResult<Boolean> applyFileRemove(HttpServletRequest request, @PathVariable Long applyId) {
-        if (applyFileDeleteService.removeApply(request, applyId)){
+        if (applyDeleteService.removeApply(request, applyId)){
             return ApiResult.OK(Boolean.TRUE);
         }
         else{
@@ -94,7 +78,6 @@ public class ApplyController {
     @GetMapping("/{noticeId}/{pageNum}")
     public ApiResult<Page<?>> applyManagerList(@PathVariable Long noticeId, @PathVariable int pageNum) {
         return ApiResult.OK(applyStatusService.findApplyByNoticeId(noticeId, pageNum));
-        //return ApiResult.OK(applyFileStatusService.findApplyFileByNoticeId(noticeId, pageNum));
     }
 
     //사용자가 파일을 제출할때

@@ -12,7 +12,6 @@ import com.example.demo.service.notice.NoticeStatusService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,14 +54,14 @@ public class ApplyStatusService {
 
         log.debug("dtype = {}", dtype);
         if (dtype.equals("file")) { // File 형식 제출일때
-            ApplyFileNoticeEntity applyFileNoticeEntity = (ApplyFileNoticeEntity)applyResourceRepository.findById(applyId).get();
-            return ApiResult.OK(new FileApplyDto(applyFileNoticeEntity));
+            ApplyFile applyFile = (ApplyFile)applyResourceRepository.findById(applyId).get();
+            return ApiResult.OK(new FileApplyDto(applyFile));
         }
         // Form 형식 제출일때
-        ApplyFormNotice applyFormNotice = (ApplyFormNotice)applyResourceRepository.findById(applyId).get();
-        FormApplyDto formApplyDto = new FormApplyDto(applyFormNotice);
+        ApplyForm applyForm = (ApplyForm)applyResourceRepository.findById(applyId).get();
+        FormApplyDto formApplyDto = new FormApplyDto(applyForm);
 
-        FormNotice noticeEntity = (FormNotice)applyFormNotice.getNoticeEntity();
+        FormNotice noticeEntity = (FormNotice) applyForm.getNoticeEntity();
         FormQuestion formQuestion = formQuestionRepository.findByFormNotice(noticeEntity).get();
         formApplyDto.setQuestion(formQuestion.getDescription());
 
@@ -78,12 +77,12 @@ public class ApplyStatusService {
 
         log.debug("dtype = {}", dtype);
         if (dtype.equals("file")) { // FileNotice 타입일 때
-            Page<ApplyFileNoticeEntity> applyResourcePage = applyResourceRepository.findAllByNoticeEntity(noticeEntity, page);
+            Page<ApplyFile> applyResourcePage = applyResourceRepository.findAllByNoticeEntity(noticeEntity, page);
             List<ApplyFileDto> collect = applyResourcePage.stream().map(applyResource -> new ApplyFileDto(applyResource)).collect(toList());
             return new PageImpl<>(collect, page, applyResourcePage.getTotalElements());
         }
         // FormNotice 타입일 때
-        Page<ApplyFormNotice> applyResourcePage = applyResourceRepository.findAllByNoticeEntity(noticeEntity, page);
+        Page<ApplyForm> applyResourcePage = applyResourceRepository.findAllByNoticeEntity(noticeEntity, page);
         List<ApplyFormDto> collect = applyResourcePage.stream().map(applyResource -> new ApplyFormDto(applyResource)).collect(toList());
 
         return new PageImpl<>(collect, page, applyResourcePage.getTotalElements());

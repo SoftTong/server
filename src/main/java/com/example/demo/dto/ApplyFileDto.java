@@ -1,7 +1,6 @@
 package com.example.demo.dto;
 
-import com.example.demo.domain.entity.ApplyFileNoticeEntity;
-import com.example.demo.domain.entity.ApplyResource;
+import com.example.demo.domain.entity.ApplyFile;
 import com.example.demo.domain.entity.StatusName;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +22,7 @@ public class ApplyFileDto {
     private Long noticeId;
     private Long applyId;
 
-    public ApplyFileDto(ApplyFileNoticeEntity applyResource) {
+    public ApplyFileDto(ApplyFile applyResource) {
         this.noticeTitle = applyResource.getNoticeEntity().getName();
         this.noticeUrl = applyResource.getNoticeEntity().getSwurl();
         this.fileName = applyResource.getFileName();

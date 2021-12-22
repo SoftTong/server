@@ -3,10 +3,7 @@ package com.example.demo.service.apply;
 import com.example.demo.controller.ApiResult;
 import com.example.demo.dao.MemberDao;
 import com.example.demo.domain.entity.*;
-import com.example.demo.domain.repository.ApplyFileRepository;
 import com.example.demo.domain.repository.ApplyResourceRepository;
-import com.example.demo.domain.repository.MemberApplyRepository;
-import com.example.demo.payload.ApiResponse;
 import com.example.demo.service.member.MemberStatusService;
 import com.example.demo.service.notice.NoticeStatusService;
 import lombok.RequiredArgsConstructor;
@@ -14,17 +11,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,15 +28,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ApplyFileResgisterService {
 
-    private final ApplyFileRepository applyFileRepository;
-    private final MemberApplyRepository memberApplyRepository;
     private final MemberStatusService memberStatusService;
     private final NoticeStatusService noticeStatusService;
     private final ApplyResourceRepository applyResourceRepository;
 
     public boolean addApplyFileSave(String filePath, MemberDao memberDao, NoticeEntity noticeEntity, String fileName){
 
-        applyResourceRepository.save(new ApplyFileNoticeEntity(filePath, fileName, memberDao, (FileNotice)noticeEntity));
+        applyResourceRepository.save(new ApplyFile(filePath, fileName, memberDao, (FileNotice)noticeEntity));
 
         return true;
     }

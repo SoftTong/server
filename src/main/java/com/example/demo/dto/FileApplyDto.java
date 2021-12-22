@@ -1,15 +1,11 @@
 package com.example.demo.dto;
 
-import com.example.demo.dao.MemberDao;
-import com.example.demo.domain.entity.ApplyFileNoticeEntity;
+import com.example.demo.domain.entity.ApplyFile;
 import com.example.demo.domain.entity.StatusName;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.CreationTimestamp;
 
-import java.lang.reflect.Member;
 import java.sql.Timestamp;
 
 @Getter
@@ -29,7 +25,7 @@ public class FileApplyDto {
     private Long applyId;
 
 
-    public FileApplyDto(ApplyFileNoticeEntity apply){
+    public FileApplyDto(ApplyFile apply){
         this.noticeTitle = apply.getNoticeEntity().getName();
         this.noticeUrl = apply.getNoticeEntity().getSwurl();
         this.fileName=apply.getFileName();

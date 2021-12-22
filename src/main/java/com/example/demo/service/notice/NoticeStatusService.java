@@ -31,8 +31,6 @@ public class NoticeStatusService {
 
 
   private final NoticeRepository noticeRepository;
-  private final ApplyFileRepository applyFileRepository;
-  private final MemberApplyRepository memberApplyRepository;
   private final MemberStatusService memberStatusService;
   private final FormQuestionRepository formQuestionRepository;
   private final NoticeLikeRepository noticeLikeRepository;

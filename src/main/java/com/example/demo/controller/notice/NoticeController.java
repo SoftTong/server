@@ -61,14 +61,11 @@ public class NoticeController {
     @GetMapping("/detail/{noticeNum}")
     public ApiResult<?> noticeDetails(@PathVariable Long noticeNum) {
         String dtype = (String) noticeStatusService.findDtypeById(noticeNum);
-        log.debug("dtype = {}", dtype);
         if (dtype.equals("file")) { // FileNotice 타입일 때
             return ApiResult.OK(noticeStatusService.getFileNotice(noticeNum));
         } else if (dtype.equals("form")) { // FormNotice 타입일 때
-            log.debug("formNotice입니다.");
             return ApiResult.OK(noticeStatusService.getFormNotice(noticeNum));
         } else {
-            log.debug("올바르지 않은 공지사항입니다.");
             return ApiResult.ERROR(new IllegalStateException("해당 게시글이 존재하지 않습니다."), HttpStatus.BAD_REQUEST);
         }
     }
@@ -80,9 +77,6 @@ public class NoticeController {
     public ApiResult<?> fileNoticeAdd(HttpServletRequest request, @RequestBody FileNoticeDto postInfo) {
         MemberDao user = memberStatusService.findMember(request).get();
         noticeRegisterService.makeFileNotice(user,postInfo);
-        System.out.println(ApiResult.OK(postInfo));
-        log.info("{}",postInfo.toString());
-        log.info("{}",postInfo);
         return ApiResult.OK(postInfo);
     }
 
@@ -105,7 +99,7 @@ public class NoticeController {
 
     // 공지사항 삭제
     @ResponseBody
-    @PostMapping("/remove/{noticeId}")
+    @DeleteMapping("/remove/{noticeId}")
     public ApiResult<?> noticeRemove(@PathVariable Long noticeId) {
         return ApiResult.OK(noticeDeleteService.removeNotice(noticeId));
     }
@@ -130,7 +124,6 @@ public class NoticeController {
     @GetMapping(value="/like")
     public ApiResult<?> memberNoticeLike(HttpServletRequest request){
         Long userId = memberStatusService.findMember(request).get().getId();
-
         List<NoticeInfoDto> noticeInfoDtoList = new ArrayList<>();
 
         for (Long noticeId : noticeStatusService.noticeUserLike(userId)) {
