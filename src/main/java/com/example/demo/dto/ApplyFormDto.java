@@ -20,6 +20,7 @@ public class ApplyFormDto {
     private Timestamp uploadDay;
     private Long noticeId;
     private Long applyId;
+    private Boolean isForm;
 
     public ApplyFormDto(ApplyForm applyResource) {
         this.noticeTitle = applyResource.getNoticeEntity().getName();
@@ -31,6 +32,7 @@ public class ApplyFormDto {
         this.uploadDay = applyResource.getUploadDay();
         this.noticeId = applyResource.getNoticeEntity().getId();
         this.applyId = applyResource.getId();
+        this.isForm = true;
     }
 
 }

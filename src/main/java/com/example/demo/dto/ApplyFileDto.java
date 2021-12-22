@@ -21,6 +21,7 @@ public class ApplyFileDto {
     private Timestamp uploadDay;
     private Long noticeId;
     private Long applyId;
+    private Boolean isForm;
 
     public ApplyFileDto(ApplyFile applyResource) {
         this.noticeTitle = applyResource.getNoticeEntity().getName();
@@ -33,6 +34,7 @@ public class ApplyFileDto {
         this.uploadDay = applyResource.getUploadDay();
         this.noticeId = applyResource.getNoticeEntity().getId();
         this.applyId = applyResource.getId();
+        this.isForm = false;
     }
 
 }
