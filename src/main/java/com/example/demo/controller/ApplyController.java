@@ -101,4 +101,12 @@ public class ApplyController {
     public ResponseEntity<InputStreamResource> applyFileDownload(@PathVariable String fileName) throws IOException {
         return applyFileStatusService.downloadApplyFile(fileName);
     }
+
+    //관리자가 사용자가 제출한 내용의 Status(wait, confirm, reject) 변경하기
+    @Secured({"ROLE_USER","ROLE_ADMIN"})
+    @ResponseBody
+    @PatchMapping(value="/status/{applyId}")
+    public ApiResult<?> applyStatusChange(HttpServletRequest request, @RequestBody ApplyStatusDto applyStatusDto, @PathVariable Long applyId) {
+        return applyStatusService.modifyApplyStatus(applyStatusDto, applyId);
+    }
 }

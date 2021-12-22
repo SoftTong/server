@@ -12,6 +12,7 @@ import com.example.demo.service.notice.NoticeStatusService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +23,7 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class ApplyStatusService {
@@ -86,5 +87,57 @@ public class ApplyStatusService {
         List<ApplyFormDto> collect = applyResourcePage.stream().map(applyResource -> new ApplyFormDto(applyResource)).collect(toList());
 
         return new PageImpl<>(collect, page, applyResourcePage.getTotalElements());
+    }
+
+    @Transactional
+    public ApiResult<?> modifyApplyStatus(ApplyStatusDto applyStatusDto, Long applyId) {
+
+        String dtype = (String) findDtypeById(applyId);
+
+        if (dtype.equals("file")) { // File 형식 제출일때
+            ApplyFile applyFile = (ApplyFile)applyResourceRepository.findById(applyId).get();
+
+            if(applyStatusDto.getStatus().equals("wait")){
+                applyFile.setStatus(StatusName.wait);
+                applyResourceRepository.save(applyFile);
+                return ApiResult.OK("wait");
+            }
+
+            else if(applyStatusDto.getStatus().equals("confirm")){
+                applyFile.setStatus(StatusName.confirm);
+                applyResourceRepository.save(applyFile);
+                return ApiResult.OK("confirm");
+            }
+
+            else if(applyStatusDto.getStatus().equals("reject")){
+                applyFile.setStatus(StatusName.reject);
+                applyResourceRepository.save(applyFile);
+                return ApiResult.OK("reject");
+            }
+
+            return ApiResult.ERROR(new IllegalStateException("잘못된 리퀘스트 입니다"), HttpStatus.BAD_REQUEST);
+        }
+        // Form 형식 제출일때
+        ApplyForm applyForm = (ApplyForm)applyResourceRepository.findById(applyId).get();
+
+        if(applyStatusDto.getStatus().equals("wait")){
+            applyForm.setStatus(StatusName.wait);
+            applyResourceRepository.save(applyForm);
+            return ApiResult.OK("wait");
+        }
+
+        else if(applyStatusDto.getStatus().equals("confirm")){
+            applyForm.setStatus(StatusName.confirm);
+            applyResourceRepository.save(applyForm);
+            return ApiResult.OK("confirm");
+        }
+
+        else if(applyStatusDto.getStatus().equals("reject")){
+            applyForm.setStatus(StatusName.reject);
+            applyResourceRepository.save(applyForm);
+            return ApiResult.OK("reject");
+        }
+
+        return ApiResult.ERROR(new IllegalStateException("잘못된 리퀘스트 입니다"), HttpStatus.BAD_REQUEST);
     }
 }
