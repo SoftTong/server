@@ -117,7 +117,7 @@ public class NoticeStatusService {
     Pageable pageable = PageRequest.of(pageNum, 10, Sort.by("uploadDay").descending());
     MemberDao currentUser = memberStatusService.findMember(req).get();
     Page<NoticeEntity> noticeEntityPages = findAllByMemberDao(currentUser,pageable);
-    List<NoticeInfoDto> noticeInfoDtoList = noticeEntityPages.stream().map(nep -> new NoticeInfoDto(nep)).collect((toList()));
+    List<NoticeInfoDto> noticeInfoDtoList = noticeEntityPages.stream().map(nep -> new NoticeInfoDto(nep,(String)findDtypeById(nep.getId()))).collect((toList()));
 
     return new PageImpl<>(noticeInfoDtoList, pageable, noticeEntityPages.getTotalElements());
   }
