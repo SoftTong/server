@@ -84,7 +84,9 @@ public class ApplyStatusService {
         }
         // FormNotice 타입일 때
         Page<ApplyForm> applyResourcePage = applyResourceRepository.findAllByNoticeEntity(noticeEntity, page);
-        List<ApplyFormDto> collect = applyResourcePage.stream().map(applyResource -> new ApplyFormDto(applyResource)).collect(toList());
+
+        FormQuestion formQuestion = formQuestionRepository.findByFormNotice((FormNotice) noticeEntity).get();
+        List<ApplyFormDto> collect = applyResourcePage.stream().map(applyResource -> new ApplyFormDto(applyResource,formQuestion.getDescription())).collect(toList());
 
         return new PageImpl<>(collect, page, applyResourcePage.getTotalElements());
     }

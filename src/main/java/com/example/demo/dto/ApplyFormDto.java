@@ -13,7 +13,6 @@ public class ApplyFormDto {
 
     private String noticeTitle;
     private String noticeUrl;
-    private String content;
     private StatusName status;
     private String memberName;
     private String userId;
@@ -22,10 +21,12 @@ public class ApplyFormDto {
     private Long applyId;
     private Boolean isForm;
 
-    public ApplyFormDto(ApplyForm applyResource) {
+    private String question;
+    private String answer;
+
+    public ApplyFormDto(ApplyForm applyResource, String question) {
         this.noticeTitle = applyResource.getNoticeEntity().getName();
         this.noticeUrl = applyResource.getNoticeEntity().getSwurl();
-        this.content = applyResource.getContent();
         this.status = applyResource.getStatus();
         this.memberName = applyResource.getMemberDao().getName();
         this.userId = applyResource.getMemberDao().getUserId();
@@ -33,6 +34,8 @@ public class ApplyFormDto {
         this.noticeId = applyResource.getNoticeEntity().getId();
         this.applyId = applyResource.getId();
         this.isForm = true;
+        this.answer = applyResource.getContent();
+        this.question = question;
     }
 
 }
