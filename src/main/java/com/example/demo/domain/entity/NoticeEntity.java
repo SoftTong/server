@@ -2,6 +2,7 @@ package com.example.demo.domain.entity;
 
 import com.example.demo.dao.MemberDao;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
@@ -15,6 +16,7 @@ import java.sql.Timestamp;
 @Setter
 @Table(name = "notice")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@NoArgsConstructor
 @DiscriminatorColumn(name = "dtype")
 public abstract class NoticeEntity {
     // 추상 클래스이기 때문에 빌더 x -> 폼 형식이면 FormNotice, 첨부 파일 형식이면 FileNotice 사용
@@ -37,17 +39,12 @@ public abstract class NoticeEntity {
 
     private int viewCount;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @BatchSize(size = 10)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private MemberDao memberDao;
 
     @Column(columnDefinition = "integer default 0")
     private Long likeCount;
-
-    protected NoticeEntity() {
-
-    }
 
     public void likeUp(){
         if (this.likeCount == null)

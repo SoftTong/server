@@ -35,7 +35,6 @@ public class NoticeStatusService {
   private final FormQuestionRepository formQuestionRepository;
   private final NoticeLikeRepository noticeLikeRepository;
 
-
   public NoticeEntity findById(Long noticeId) {
     Optional<NoticeEntity> findNotice = noticeRepository.findById(noticeId);
     if(findNotice.isEmpty()) {
@@ -45,13 +44,12 @@ public class NoticeStatusService {
   }
 
   public List<NoticeEntity> findByMember(MemberDao currentUser){
-
     return noticeRepository.findByMemberDao(currentUser);
   }
 
   public Page<NoticeInfoDto> findAllByPagination(int pageNum) {
     Pageable pageable = PageRequest.of(pageNum, 10, Sort.by("uploadDay").descending());
-    Page<NoticeEntity> noticeEntityPages = noticeRepository.findAll(pageable);
+    Page<NoticeEntity> noticeEntityPages = noticeRepository.findAllByFetchJoin(pageable);
     List<NoticeInfoDto> collect = noticeEntityPages.stream().map(nep -> new NoticeInfoDto(nep)).collect((toList()));
     return new PageImpl<>(collect, pageable, noticeEntityPages.getTotalElements());
   }

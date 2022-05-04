@@ -26,6 +26,10 @@ public interface NoticeRepository extends JpaRepository<NoticeEntity, Long> {
     //id로 pagination.
     Page<NoticeEntity> findAllByMemberDao(MemberDao memberDao, Pageable pageable);
 
+    @Query(value = "SELECT DISTINCT n FROM NoticeEntity n JOIN FETCH n.memberDao",
+            countQuery = "select count(n) from NoticeEntity n")
+    Page<NoticeEntity> findAllByFetchJoin(Pageable pageable);
+
     // 데이터 타입 찾기 (첨부파일 or 폼 형식)
     @Query(value = "select n.dtype from notice n where n.id = ?1", nativeQuery = true)
     Object findDtypeById(Long noticeId);
