@@ -19,6 +19,10 @@ public interface ApplyResourceRepository<T extends ApplyResource> extends JpaRep
 
     Page<T> findAllByMemberDao(MemberDao memberDao, Pageable pageable);
 
+    @Query(value = "select a from ApplyResource a join fetch a.memberDao",
+    countQuery = "select count(a) from ApplyResource a")
+    Page<T> findAllByMemberDaoFetchJoin(MemberDao memberDao, Pageable pageable);
+
     @Query(value = "select * from apply_resource m where m.notice_id = ?1 and m.member_id=?2", nativeQuery = true)
     Optional<T> findByNoticeWithMember(NoticeEntity noticeEntity, MemberDao memberDao);
 

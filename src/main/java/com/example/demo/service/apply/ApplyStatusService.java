@@ -18,7 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -42,9 +45,14 @@ public class ApplyStatusService {
 
         Pageable page = PageRequest.of(pageNum, 10, Sort.by("id").descending());
         MemberDao currentMember = memberStatusService.findMember(request).get();
-        Page<ApplyResource> applyResourcePage = applyResourceRepository.findAllByMemberDao(currentMember, page);
-        List<ApplyListDto> collect = applyResourcePage.stream().map(applyResource ->
-                new ApplyListDto(applyResource, noticeRepository.findDtypeById(applyResource.getNoticeEntity().getId()))).collect(toList());
+        Page<ApplyResource> applyResourcePage = applyResourceRepository.findAllByMemberDaoFetchJoin(currentMember, page);
+        List<Long> ids = applyResourcePage.stream().map(applyResource -> applyResource.getId()).collect(Collectors.toUnmodifiableList());
+        List<Object> dtypes = noticeRepository.findDtypeInIds(ids);
+        int idx = 0;
+        List<ApplyListDto> collect = new ArrayList<>();
+        for(ApplyResource a : applyResourcePage) {
+            collect.add(new ApplyListDto(a, dtypes.get(idx++)));
+        }
 
         return new PageImpl<>(collect, page, applyResourcePage.getTotalElements());
     }

@@ -30,6 +30,10 @@ public interface NoticeRepository extends JpaRepository<NoticeEntity, Long> {
             countQuery = "select count(n) from NoticeEntity n")
     Page<NoticeEntity> findAllByFetchJoin(Pageable pageable);
 
+    @Query(value = "select n.dtype from notice n where n.id in :ids", nativeQuery = true)
+    List<Object> findDtypeInIds(@Param("ids") List<Long> ids);
+
+
     // 데이터 타입 찾기 (첨부파일 or 폼 형식)
     @Query(value = "select n.dtype from notice n where n.id = ?1", nativeQuery = true)
     Object findDtypeById(Long noticeId);
