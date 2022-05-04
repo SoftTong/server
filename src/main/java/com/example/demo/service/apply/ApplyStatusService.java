@@ -53,7 +53,6 @@ public class ApplyStatusService {
         for(ApplyResource a : applyResourcePage) {
             collect.add(new ApplyListDto(a, dtypes.get(idx++)));
         }
-
         return new PageImpl<>(collect, page, applyResourcePage.getTotalElements());
     }
 

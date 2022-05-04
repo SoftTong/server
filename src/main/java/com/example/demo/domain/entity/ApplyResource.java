@@ -23,12 +23,10 @@ public abstract class ApplyResource {
     private Timestamp uploadDay;
 
     @ManyToOne(fetch = FetchType.LAZY)
-//    @BatchSize(size = 10)
     @JoinColumn(name = "member_id")
     private MemberDao memberDao;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @BatchSize(size = 10)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notice_id")
     private NoticeEntity noticeEntity;
 
